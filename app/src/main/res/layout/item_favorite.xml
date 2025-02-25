@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:background="#f5f5f5"
+    android:layout_marginBottom="8dp"
+    android:gravity="center_vertical">
+
+    <!-- Hình ảnh sản phẩm -->
+    <ImageView
+        android:id="@+id/ivFavoriteImage"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/pho_picture"
+        android:scaleType="centerCrop"
+        android:layout_marginEnd="8dp" />
+
+    <!-- Thông tin sản phẩm -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvFavoriteName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tên sản phẩm"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvFavoritePrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="100.000đ"
+            android:textSize="14sp"
+            android:textColor="#FF5722" />
+    </LinearLayout>
+
+    <!-- Nút xóa khỏi yêu thích -->
+    <Button
+        android:id="@+id/btnRemoveFavorite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Xóa"
+        android:textSize="14sp"
+        android:backgroundTint="#FF5722"
+        android:textColor="#FFFFFF" />
+</LinearLayout>

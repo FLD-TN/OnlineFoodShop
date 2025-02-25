@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn = "navigation_view"
+    >
+<group android:checkableBehavior="single">
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/nav_home"
+        android:title="Trang Chủ"/>
+    <item
+        android:id="@+id/nav_cart"
+        android:icon="@drawable/nav_about"
+        android:title="Giỏ Hàng"/>
+    <item
+        android:id="@+id/nav_cskh"
+        android:icon="@drawable/nav_about"
+        android:title="CSKH"/>
+    <item
+        android:id="@+id/nav_about"
+        android:icon="@drawable/nav_setting"
+        android:title="Giới Thiệu"/>
+    <item
+        android:id="@+id/nav_terms"
+        android:icon="@drawable/nav_setting"
+        android:title="Điều Khoản &amp; Chính Sách"/>
+
+
+</group>
+    <item android:title="">
+        <menu>
+            <item android:id="@+id/nav_logout"
+                android:icon="@drawable/nav_logout"
+                android:title="Đăng Xuất"/>
+        </menu>
+    </item>
+
+</menu>

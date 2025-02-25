@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Màu cam khi được chọn -->
+    <item android:color="#FFA500" android:state_checked="true" />
+    <!-- Màu xám khi không được chọn -->
+    <item android:color="#666666" android:state_checked="false" />
+</selector>

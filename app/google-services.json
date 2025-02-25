@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1090470771316",
+    "project_id": "futureonlinefoodshop",
+    "storage_bucket": "futureonlinefoodshop.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1090470771316:android:9b07ad2010cd720386ef21",
+        "android_client_info": {
+          "package_name": "com.sinhvien.onlinefoodshop"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBOGmArF3DVRQSGCIgZzSH4CNR6SLiP7Co"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
