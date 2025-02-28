@@ -21,12 +21,12 @@
             <LinearLayout
                 android:id="@+id/header"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="120dp"
+                android:background="@drawable/header_home_fragment_background"
                 android:orientation="vertical"
                 android:paddingStart="10dp"
-                android:paddingEnd="10dp"
                 android:paddingTop="5dp"
-                android:background="@drawable/header_home_fragment_background"
+                android:paddingEnd="10dp"
                 android:paddingBottom="5dp">
 
                 <!-- TextView hiển thị vị trí -->
@@ -34,44 +34,36 @@
                     android:id="@+id/tv_location"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:gravity="center"
                     android:text="Vị trí: Chưa có"
                     android:textColor="#FFFFFF"
-                android:textSize="12sp"
-                android:gravity="center"
-                android:layout_marginTop="5dp" />
+                    android:textSize="12sp" />
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/search_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="25dp"
-                    app:cardElevation="5dp"
-                    app:cardCornerRadius="8dp">
+                    android:layout_marginTop="20dp"
+                    app:cardCornerRadius="40dp"
+                    app:cardElevation="5dp">
 
-                    <RelativeLayout
+                    <EditText
+                        android:id="@+id/etSearchUser"
                         android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:padding="8dp">
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/edit_text_bg"
+                        android:drawableStart="@android:drawable/ic_menu_search"
+                        android:hint="Tìm kiếm món ăn của bạn...."
+                        android:padding="8dp"
+                        android:textColor="@color/black"
+                        android:textSize="15dp"
+                        android:textStyle="italic"
+                        android:textColorHint="#999999"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                        <ImageView
-                            android:id="@+id/search_icon"
-                            android:layout_width="35dp"
-                            android:layout_height="31dp"
-                            android:layout_alignParentStart="true"
-                            android:layout_marginStart="-5dp"
-                            android:src="@drawable/search_icon"
-                            app:tint="#333333" />
-
-                        <EditText
-                            android:id="@+id/search_bar"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_toEndOf="@id/search_icon"
-                            android:hint="Tìm kiếm món ăn mà bạn yêu thích..."
-                            android:textColorHint="#b5b5c9"
-                            android:padding="2dp"
-                            android:textSize="14sp" />
-                    </RelativeLayout>
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -92,8 +84,8 @@
             android:id="@+id/category_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="8dp"
+            android:orientation="vertical">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
@@ -115,8 +107,8 @@
             android:id="@+id/food_item_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_marginTop="8dp"
+            android:orientation="vertical"
             android:paddingStart="5dp"
             android:paddingEnd="5dp">
 
@@ -129,36 +121,38 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingStart="10dp"
-                    android:layout_marginTop="10dp">
+                    android:layout_marginTop="10dp"
+                    android:paddingStart="10dp">
 
                     <TextView
                         android:id="@+id/tv_food_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
                         android:text="Món ăn"
-                        android:textSize="20sp"
                         android:textColor="#df6131"
-                        android:textStyle="bold"
-                        android:layout_alignParentStart="true" />
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tv_view_all"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Xem tất cả"
-                        android:textSize="14sp"
                         android:layout_alignParentEnd="true"
+                        android:layout_marginTop="2dp"
                         android:layout_marginEnd="25dp"
-                        android:layout_marginTop="2dp" />
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:text="Xem tất cả"
+                        android:textSize="14sp" />
 
                     <ImageView
                         android:layout_width="15dp"
                         android:layout_height="19dp"
-                        android:src="@drawable/greater_than_symbol"
                         android:layout_alignParentEnd="true"
-                        android:layout_marginEnd="5dp"
                         android:layout_marginTop="3dp"
+                        android:layout_marginEnd="5dp"
+                        android:src="@drawable/greater_than_symbol"
                         app:tint="#808080" />
                 </RelativeLayout>
 
@@ -166,8 +160,8 @@
                     android:id="@+id/recycler_food_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"
                     android:layout_marginTop="40dp"
+                    android:nestedScrollingEnabled="false"
                     android:padding="5dp" />
             </androidx.cardview.widget.CardView>
         </LinearLayout>

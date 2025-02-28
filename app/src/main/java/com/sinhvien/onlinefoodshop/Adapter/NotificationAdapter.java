@@ -33,7 +33,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.tvNotificationTitle.setText("Thông báo #" + (position + 1));
         holder.tvNotificationContent.setText("Nội dung thông báo: " + notification);
         holder.tvNotificationTime.setText((position + 1) * 5 + " phút trước");
-        holder.ivNotificationIcon.setImageResource(R.drawable.noodles_icon);
+        holder.ivNotificationIcon.setImageResource(R.drawable.pho_picture);
     }
 
     @Override

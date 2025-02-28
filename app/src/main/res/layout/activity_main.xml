@@ -28,8 +28,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header_login"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:background="@drawable/header_login_rounded_background">
+        app:layout_constraintStart_toStartOf="parent">
 
         <!-- TabLayout -->
         <com.google.android.material.tabs.TabLayout

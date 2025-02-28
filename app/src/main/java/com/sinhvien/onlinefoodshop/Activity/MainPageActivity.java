@@ -1,10 +1,8 @@
 package com.sinhvien.onlinefoodshop.Activity;
 
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.sinhvien.onlinefoodshop.R;
 import com.sinhvien.onlinefoodshop.fragment.AboutFragment;
@@ -37,20 +35,15 @@ public class MainPageActivity extends AppCompatActivity {
             if (id == R.id.bottom_nav_home && mCurrentFragment != FRAGMENT_HOME) {
                 replaceFragment(new HomeFragment());
                 mCurrentFragment = FRAGMENT_HOME;
-
             } else if (id == R.id.bottom_nav_cart && mCurrentFragment != FRAGMENT_CART) {
                 replaceFragment(new CartFragment());
                 mCurrentFragment = FRAGMENT_CART;
-
             } else if (id == R.id.bottom_nav_notification && mCurrentFragment != FRAGMENT_NOTIFICATION) {
                 replaceFragment(new NotificationFragment());
                 mCurrentFragment = FRAGMENT_NOTIFICATION;
-
-            }else if (id == R.id.bottom_nav_fav && mCurrentFragment != FRAGMENT_FAVORITES) {
-                    replaceFragment(new FavouriteFragment());
-                    mCurrentFragment = FRAGMENT_FAVORITES;
-
-
+            } else if (id == R.id.bottom_nav_fav && mCurrentFragment != FRAGMENT_FAVORITES) {
+                replaceFragment(new FavouriteFragment());
+                mCurrentFragment = FRAGMENT_FAVORITES;
             } else if (id == R.id.bottom_nav_user && mCurrentFragment != FRAGMENT_USER_INFORMATION) {
                 replaceFragment(new UserInfomationFragment());
                 mCurrentFragment = FRAGMENT_USER_INFORMATION;
@@ -64,9 +57,16 @@ public class MainPageActivity extends AppCompatActivity {
         }
     }
 
-    private void replaceFragment(Fragment fragment) {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.content_frame, fragment);
-        transaction.commit();
+    private void replaceFragment(androidx.fragment.app.Fragment fragment) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.content_frame, fragment)
+                .commit();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        prefs.edit().putLong("LastBackgroundTime", System.currentTimeMillis()).apply();
     }
 }

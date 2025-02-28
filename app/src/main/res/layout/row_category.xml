@@ -9,7 +9,7 @@
     >
 
     <LinearLayout
-        android:layout_width="63dp"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="center_horizontal"
         android:outlineProvider="none"
@@ -20,8 +20,9 @@
             android:layout_width="52dp"
             android:layout_height="42dp"
             android:layout_marginTop="3sp"
-            android:src="@drawable/noodles_icon" />
-        <!--      android:scaleType="centerCrop" -->
+            android:src="@drawable/pho_picture"
+            />
+
 
 
         <TextView
@@ -31,6 +32,7 @@
             android:layout_marginTop="2dp"
             android:layout_marginEnd="2dp"
             android:fontFamily="@font/poppins_semibold"
+            android:layout_gravity="center_horizontal"
             android:text="Phở"
             android:textColor="@color/black"
             android:textSize="9sp"
