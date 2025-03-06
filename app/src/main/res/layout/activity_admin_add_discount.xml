@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Tiêu đề -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Quản lý khuyến mãi"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#E64A19" />
+
+    <!-- Tìm kiếm sản phẩm -->
+    <EditText
+        android:id="@+id/etSearchProduct"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/edit_text_bg"
+        android:drawableStart="@android:drawable/ic_menu_search"
+        android:hint="Tìm kiếm sản phẩm..."
+        android:padding="8dp"
+        android:textColor="@color/black"
+        android:textColorHint="#999999"
+        android:textSize="15sp"
+        android:inputType="text" />
+
+    <!-- Chọn danh mục -->
+    <Spinner
+        android:id="@+id/spinnerCategory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@android:drawable/btn_dropdown"
+        android:spinnerMode="dropdown" />
+
+    <!-- Danh sách sản phẩm -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerProducts"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="8dp" />
+
+    <!-- Nút thêm khuyến mãi -->
+    <Button
+        android:id="@+id/btnAddDiscount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="#E64A19"
+        android:text="Thêm khuyến mãi"
+        android:textColor="@android:color/white" />
+
+    <!-- Nút áp dụng khuyến mãi cho danh mục -->
+    <Button
+        android:id="@+id/btnApplyCategoryDiscount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="#4CAF50"
+        android:text="Áp dụng KM cho danh mục"
+        android:textColor="@android:color/white" />
+</LinearLayout>

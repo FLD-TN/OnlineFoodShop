@@ -1,4 +1,4 @@
-package com.sinhvien.onlinefoodshop.Activity;
+package com.sinhvien.onlinefoodshop.Activity.ForUser;
 
 import android.os.Bundle;
 import android.text.Editable;
@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -17,6 +16,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.sinhvien.onlinefoodshop.Adapter.UserProductAdapter;
 import com.sinhvien.onlinefoodshop.ApiService;
+import com.sinhvien.onlinefoodshop.Model.CategoryModel;
 import com.sinhvien.onlinefoodshop.Model.ProductModel;
 import com.sinhvien.onlinefoodshop.R;
 import retrofit2.Call;
@@ -32,7 +32,6 @@ public class ProductListActivity extends AppCompatActivity {
     private RecyclerView rvProductList;
     private EditText etSearchProduct;
     private Spinner spinnerCategory;
-    private Button btnViewAll;
     private ProgressBar progressBar;
     private UserProductAdapter productAdapter;
     private ApiService apiService;
@@ -47,7 +46,6 @@ public class ProductListActivity extends AppCompatActivity {
         rvProductList = findViewById(R.id.rvProductList);
         etSearchProduct = findViewById(R.id.etSearchProduct);
         spinnerCategory = findViewById(R.id.spinnerCategory);
-        btnViewAll = findViewById(R.id.btnViewAll);
         progressBar = findViewById(R.id.progressBar);
 
         productAdapter = new UserProductAdapter();
@@ -80,12 +78,8 @@ public class ProductListActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {}
         });
 
-        setupCategorySpinner();
+        loadCategories();
 
-        btnViewAll.setOnClickListener(v -> {
-            spinnerCategory.setSelection(0); // Reset về "Tất cả"
-            productAdapter.setProductList(fullProductList);
-        });
     }
 
     private void loadProductList() {
@@ -143,25 +137,34 @@ public class ProductListActivity extends AppCompatActivity {
         });
     }
 
-    private void setupCategorySpinner() {
-        List<String> categories = new ArrayList<>();
-        categories.add("Tất cả");
-        categories.add("Phở");
-        categories.add("Bánh Mì");
-        categories.add("Nước Ngọt");
-        categories.add("Trà Sữa");
-        categories.add("Cơm");
-        categories.add("Ăn vặt");
-        categories.add("Tráng Miệng");
-        categories.add("Đồ Ăn Nhanh");
-        categories.add("Lẩu");
-        categories.add("Hải Sản");
-        categories.add("Đồ chay");
+    private void loadCategories() {
+        Call<List<CategoryModel>> call = apiService.getCategories();
+        call.enqueue(new Callback<List<CategoryModel>>() {
+            @Override
+            public void onResponse(Call<List<CategoryModel>> call, Response<List<CategoryModel>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<CategoryModel> categoryModels = response.body();
+                    List<String> categories = new ArrayList<>();
+                    categories.add("Tất cả"); // Thêm "Tất cả" vào đầu danh sách
+                    for (CategoryModel categoryModel : categoryModels) {
+                        categories.add(categoryModel.getCategoryName());
+                    }
+                    setupCategorySpinner(categories);
+                } else {
+                    Toast.makeText(ProductListActivity.this, "Không thể tải danh mục", Toast.LENGTH_SHORT).show();
+                }
+            }
 
+            @Override
+            public void onFailure(Call<List<CategoryModel>> call, Throwable t) {
+                Toast.makeText(ProductListActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    private void setupCategorySpinner(List<String> categories) {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCategory.setAdapter(adapter);
-
         spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -173,7 +176,6 @@ public class ProductListActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
     }
-
     private void filterByCategory(String category) {
         if (category.equals("Tất cả")) {
             productAdapter.setProductList(fullProductList);

@@ -1,6 +1,5 @@
-package com.sinhvien.onlinefoodshop.Activity;
+package com.sinhvien.onlinefoodshop.Activity.ForAdmin.Product;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +13,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.sinhvien.onlinefoodshop.ApiService;
 import com.sinhvien.onlinefoodshop.Model.ProductModel;
 import com.sinhvien.onlinefoodshop.R;
@@ -99,7 +99,7 @@ public class Admin_ProductDetails_Activity extends AppCompatActivity {
 
     private void updateUI() {
         tvProductName.setText("Tên: " + (currentProduct.getProductName() != null ? currentProduct.getProductName() : ""));
-        tvProductPrice.setText("Giá: " + String.format("%,.0f VND", currentProduct.getProductPrice()));
+        tvProductPrice.setText("Giá: " + String.format("%,.0fđ", currentProduct.getProductPrice()));
         tvDescription.setText("Mô tả: " + (currentProduct.getDescription() != null ? currentProduct.getDescription() : ""));
         tvCategory.setText("Danh mục: " + (currentProduct.getCategory() != null ? currentProduct.getCategory() : ""));
 

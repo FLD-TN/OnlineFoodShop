@@ -1,7 +1,6 @@
 package com.sinhvien.onlinefoodshop.fragment;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -13,7 +12,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 
-import com.sinhvien.onlinefoodshop.Activity.MainPageActivity;
+import com.sinhvien.onlinefoodshop.Activity.ForUser.MainPageActivity;
 import com.sinhvien.onlinefoodshop.ApiService;
 import com.sinhvien.onlinefoodshop.Model.UserModel;
 import com.sinhvien.onlinefoodshop.R;

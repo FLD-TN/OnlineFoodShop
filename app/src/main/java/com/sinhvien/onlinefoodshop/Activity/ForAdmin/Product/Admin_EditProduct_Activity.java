@@ -1,4 +1,4 @@
-package com.sinhvien.onlinefoodshop.Activity;
+package com.sinhvien.onlinefoodshop.Activity.ForAdmin.Product;
 
 import android.content.Intent;
 import android.os.Bundle;

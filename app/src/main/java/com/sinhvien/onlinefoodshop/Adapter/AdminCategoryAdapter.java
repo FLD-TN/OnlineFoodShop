@@ -11,7 +11,7 @@ import android.widget.TextView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.sinhvien.onlinefoodshop.Activity.Admin_CategoryDetails_Activity;
+import com.sinhvien.onlinefoodshop.Activity.ForAdmin.Category.Admin_CategoryDetails_Activity;
 import com.sinhvien.onlinefoodshop.Model.CategoryModel;
 import com.sinhvien.onlinefoodshop.R;
 import com.squareup.picasso.Callback;

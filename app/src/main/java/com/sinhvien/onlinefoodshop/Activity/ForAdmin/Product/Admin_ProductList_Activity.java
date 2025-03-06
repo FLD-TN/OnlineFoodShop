@@ -1,15 +1,14 @@
-package com.sinhvien.onlinefoodshop.Activity;
+package com.sinhvien.onlinefoodshop.Activity.ForAdmin.Product;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
@@ -17,7 +16,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.airbnb.lottie.LottieAnimationView;
+
+import com.sinhvien.onlinefoodshop.Activity.ForAdmin.Discount.Admin_AddDiscount_Activity;
 import com.sinhvien.onlinefoodshop.Adapter.ProductAdapter;
 import com.sinhvien.onlinefoodshop.ApiService;
 import com.sinhvien.onlinefoodshop.Model.ProductModel;
@@ -29,7 +29,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import java.util.List;
 
-public class Admin_ProductList_Activity extends AppCompatActivity {
+public class Admin_ProductList_Activity extends AppCompatActivity implements ProductAdapter.OnDiscountActionListener {
     private static final String TAG = "Admin_ProductList_Activity";
     private RecyclerView rvProductList;
     private ProductAdapter productAdapter;
@@ -37,6 +37,7 @@ public class Admin_ProductList_Activity extends AppCompatActivity {
     private ProgressBar progressBar;
     private Button btnAddProduct;
     private ApiService apiService;
+    private ImageView ivProductImage;
     private final String BASE_URL = "https://foodshop-backend-jck5.onrender.com/";
 
     private final ActivityResultLauncher<Intent> productDetailsLauncher = registerForActivityResult(
@@ -71,8 +72,7 @@ public class Admin_ProductList_Activity extends AppCompatActivity {
         etSearchProduct = findViewById(R.id.etSearchProduct);
         progressBar = findViewById(R.id.progressBar);
         btnAddProduct = findViewById(R.id.btnAddProduct);
-
-        productAdapter = new ProductAdapter(productDetailsLauncher);
+        productAdapter = new ProductAdapter(productDetailsLauncher, this); // Sử dụng constructor với OnDiscountActionListener
         rvProductList.setLayoutManager(new LinearLayoutManager(this));
         rvProductList.setAdapter(productAdapter);
 
@@ -81,7 +81,7 @@ public class Admin_ProductList_Activity extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         apiService = retrofit.create(ApiService.class);
-        //load danh sách product
+        // Load danh sách product
         loadProductList();
 
         btnAddProduct.setOnClickListener(v -> {
@@ -162,6 +162,36 @@ public class Admin_ProductList_Activity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
                 Log.e(TAG, "Error searching products: " + t.getMessage());
                 Toast.makeText(Admin_ProductList_Activity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void onEditDiscount(ProductModel product) {
+        // Chuyển đến Admin_AddDiscount_Activity để chỉnh sửa khuyến mãi
+        Intent intent = new Intent(this, Admin_AddDiscount_Activity.class);
+        intent.putExtra("selectedProduct", product);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onRemoveDiscount(ProductModel product) {
+        product.setDiscount(0);
+        product.setDiscountAmount(0);
+        apiService.updateProduct(product.getProductID(), product).enqueue(new Callback<ProductModel>() {
+            @Override
+            public void onResponse(Call<ProductModel> call, Response<ProductModel> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(Admin_ProductList_Activity.this, "Xóa khuyến mãi thành công", Toast.LENGTH_SHORT).show();
+                    loadProductList(); // Cập nhật lại danh sách
+                } else {
+                    Toast.makeText(Admin_ProductList_Activity.this, "Xóa khuyến mãi thất bại", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ProductModel> call, Throwable t) {
+                Toast.makeText(Admin_ProductList_Activity.this, "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

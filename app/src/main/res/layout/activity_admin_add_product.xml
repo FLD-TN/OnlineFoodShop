@@ -24,11 +24,10 @@
         android:layout_height="wrap_content"
         android:hint="Mô tả" />
 
-    <EditText
-        android:id="@+id/edtCategory"
+    <Spinner
+        android:id="@+id/spinnerCategory"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Danh mục" />
+        android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/btnPickImage"

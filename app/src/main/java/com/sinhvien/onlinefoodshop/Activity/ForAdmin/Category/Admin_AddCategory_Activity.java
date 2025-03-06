@@ -1,4 +1,4 @@
-package com.sinhvien.onlinefoodshop.Activity;
+package com.sinhvien.onlinefoodshop.Activity.ForAdmin.Category;
 
 import android.Manifest;
 import android.content.Intent;
@@ -10,16 +10,16 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.Task;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.http.FileContent;
@@ -33,40 +33,58 @@ import com.sinhvien.onlinefoodshop.ApiService;
 import com.sinhvien.onlinefoodshop.Model.CategoryModel;
 import com.sinhvien.onlinefoodshop.R;
 import retrofit2.Call;
-import android.widget.ProgressBar;
-
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.util.Collections;
-
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.UUID;
 
-public class Admin_EditCategory_Activity extends AppCompatActivity {
-    private static final String TAG = "Admin_EditCategory_Activity";
-    private EditText edtCategoryName;
-    private Button btnSave, btnCancel , btnPickImage;
-    private ApiService apiService;
-    private CategoryModel currentCategory;
-    private GoogleSignInClient googleSignInClient;
-    private Uri imageUri;
-    private Drive driveService;
-    private String imageUrl,folderParentId;
+public class Admin_AddCategory_Activity extends AppCompatActivity {
+    private static final String TAG = "Admin_AddCategory_Activity";
     private static final int REQUEST_STORAGE_PERMISSION = 100;
     private static final String FOLDER_NAME = "FutureFoodShop_Images";
-    private ProgressBar progressBar;
+    private EditText edtCategoryName;
+    private Button btnSave, btnPickImage,btnCancel;
+    private ApiService apiService;
+    private Uri imageUri;
+    private GoogleSignInClient googleSignInClient;
+    private Drive driveService;
+    private String imageUrl,folderParentId;
+
+    private final ActivityResultLauncher<Intent> signInLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(result.getData());
+                    handleSignInResult(task);
+                } else {
+                    Toast.makeText(this, "Đăng nhập Google bị hủy", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+    private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    imageUri = result.getData().getData();
+                    findOrCreateFolderAndUpload();
+                } else {
+                    Toast.makeText(this, "Chọn ảnh bị hủy", Toast.LENGTH_SHORT).show();
+                }
+            });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_admin_edit_category);
+        setContentView(R.layout.activity_admin_add_category);
 
         edtCategoryName = findViewById(R.id.edtCategoryName);
         btnPickImage = findViewById(R.id.btnPickImage);
         btnSave = findViewById(R.id.btnSave);
         btnCancel = findViewById(R.id.btnCancel);
-        progressBar = findViewById(R.id.progressBar);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://foodshop-backend-jck5.onrender.com/")
@@ -74,23 +92,16 @@ public class Admin_EditCategory_Activity extends AppCompatActivity {
                 .build();
         apiService = retrofit.create(ApiService.class);
 
-        Intent intent = getIntent();
-        currentCategory = (CategoryModel) intent.getSerializableExtra("categoryDetail");
-
-        if (currentCategory != null && currentCategory.getCategoryId() != null) {
-            edtCategoryName.setText(currentCategory.getCategoryName());
-        } else {
-            Log.e(TAG, "Current category is null or missing categoryId");
-            Toast.makeText(this, "Không tải được thông tin loại sản phẩm", Toast.LENGTH_SHORT).show();
-            finish();
-        }
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .requestScopes(new Scope(DriveScopes.DRIVE_FILE))
+                .build();
+        googleSignInClient = GoogleSignIn.getClient(this, gso);
 
         btnPickImage.setOnClickListener(v -> checkAndRequestPermissions());
-
-        btnSave.setOnClickListener(v -> saveCategoryChanges());
+        btnSave.setOnClickListener(v -> addCategory());
         btnCancel.setOnClickListener(v -> finish());
     }
-
 
     private void checkAndRequestPermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED) {
@@ -128,17 +139,6 @@ public class Admin_EditCategory_Activity extends AppCompatActivity {
         }
     }
 
-    private final ActivityResultLauncher<Intent> signInLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == RESULT_OK) {
-                    Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(result.getData());
-                    handleSignInResult(task);
-                } else {
-                    Toast.makeText(this, "Đăng nhập Google bị hủy", Toast.LENGTH_SHORT).show();
-                }
-            });
-
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account;
@@ -171,16 +171,6 @@ public class Admin_EditCategory_Activity extends AppCompatActivity {
         }
     }
 
-    private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    imageUri = result.getData().getData();
-                    findOrCreateFolderAndUpload();
-                } else {
-                    Toast.makeText(this, "Chọn ảnh bị hủy", Toast.LENGTH_SHORT).show();
-                }
-            });
     private void pickImage() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         pickImageLauncher.launch(intent);
@@ -226,7 +216,7 @@ public class Admin_EditCategory_Activity extends AppCompatActivity {
 
             } catch (Exception e) {
                 Log.e(TAG, "Error finding/creating folder: " + e.getMessage(), e);
-                runOnUiThread(() -> Toast.makeText(Admin_EditCategory_Activity.this,
+                runOnUiThread(() -> Toast.makeText(Admin_AddCategory_Activity.this,
                         "Lỗi khi tìm/tạo thư mục: " + e.getMessage(), Toast.LENGTH_SHORT).show());
             }
         }).start();
@@ -276,6 +266,47 @@ public class Admin_EditCategory_Activity extends AppCompatActivity {
         }
     }
 
+    private void addCategory() {
+        String categoryId = UUID.randomUUID().toString();
+        String categoryName = edtCategoryName.getText().toString().trim();
+
+        if (categoryName.isEmpty()) {
+            Toast.makeText(this, "Vui lòng điền tên loại sản phẩm", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (imageUrl == null || imageUrl.isEmpty()) {
+            Toast.makeText(this, "Vui lòng chọn và tải lên hình ảnh", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        CategoryModel newCategory = new CategoryModel(categoryName, imageUrl);
+        newCategory.setCategoryId(categoryId);
+
+        apiService.addCategory(newCategory).enqueue(new Callback<CategoryModel>() {
+            @Override
+            public void onResponse(Call<CategoryModel> call, Response<CategoryModel> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d(TAG, "Category added successfully: " + categoryName);
+                    Toast.makeText(Admin_AddCategory_Activity.this, "Thêm loại sản phẩm thành công", Toast.LENGTH_SHORT).show();
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("newCategory", response.body());
+                    setResult(RESULT_OK, resultIntent);
+                    finish();
+                } else {
+                    Log.e(TAG, "Add category failed. Code: " + response.code());
+                    Toast.makeText(Admin_AddCategory_Activity.this, "Thêm loại sản phẩm thất bại. Mã lỗi: " + response.code(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CategoryModel> call, Throwable t) {
+                Log.e(TAG, "Error adding category: " + t.getMessage());
+                Toast.makeText(Admin_AddCategory_Activity.this, "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private java.io.File uriToFile(Uri uri) throws Exception {
         java.io.File file = new java.io.File(getCacheDir(), "temp_image_" + System.currentTimeMillis() + ".png");
         try (InputStream inputStream = getContentResolver().openInputStream(uri);
@@ -287,46 +318,5 @@ public class Admin_EditCategory_Activity extends AppCompatActivity {
             }
         }
         return file;
-    }
-
-    private void saveCategoryChanges() {
-        if (currentCategory == null || currentCategory.getCategoryId() == null) {
-            Toast.makeText(this, "Thông tin loại sản phẩm không hợp lệ", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String categoryName = edtCategoryName.getText().toString().trim();
-        String categoryImageUrl = imageUrl;
-
-        if (categoryName.isEmpty()) {
-            Toast.makeText(this, "Vui lòng điền tên loại sản phẩm", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        currentCategory.setCategoryName(categoryName);
-        currentCategory.setCategoryIcon(categoryImageUrl);
-
-        apiService.updateCategory(currentCategory.getCategoryId(), currentCategory).enqueue(new Callback<CategoryModel>() {
-            @Override
-            public void onResponse(Call<CategoryModel> call, Response<CategoryModel> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    Log.d(TAG, "Category updated successfully: " + categoryName);
-                    Toast.makeText(Admin_EditCategory_Activity.this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
-                    Intent resultIntent = new Intent();
-                    resultIntent.putExtra("updatedCategory", response.body());
-                    setResult(RESULT_OK, resultIntent);
-                    finish();
-                } else {
-                    Log.e(TAG, "Update failed. Code: " + response.code());
-                    Toast.makeText(Admin_EditCategory_Activity.this, "Cập nhật thất bại. Mã lỗi: " + response.code(), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<CategoryModel> call, Throwable t) {
-                Log.e(TAG, "Error updating category: " + t.getMessage());
-                Toast.makeText(Admin_EditCategory_Activity.this, "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 }

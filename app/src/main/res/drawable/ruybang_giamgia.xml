@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Nền ruy băng -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#FF5722"/> <!-- Màu cam đỏ hiện đại -->
+        </shape>
+    </item>
+
+    <!-- Hình tam giác cắt góc -->
+    <item android:gravity="end">
+        <shape android:shape="rectangle">
+            <solid android:color="#D84315"/> <!-- Màu đậm hơn để tạo hiệu ứng 3D -->
+            <corners android:radius="4dp"/>
+        </shape>
+    </item>
+</layer-list>

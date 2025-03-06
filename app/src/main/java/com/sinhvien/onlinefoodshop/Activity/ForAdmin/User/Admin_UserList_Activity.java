@@ -1,4 +1,4 @@
-package com.sinhvien.onlinefoodshop.Activity;
+package com.sinhvien.onlinefoodshop.Activity.ForAdmin.User;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,7 +24,6 @@ import com.sinhvien.onlinefoodshop.ApiService;
 import com.sinhvien.onlinefoodshop.Model.UserModel;
 import com.sinhvien.onlinefoodshop.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;

@@ -1,4 +1,4 @@
-package com.sinhvien.onlinefoodshop.Activity;
+package com.sinhvien.onlinefoodshop.Activity.ForAdmin;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,6 +8,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import com.sinhvien.onlinefoodshop.Activity.ForAdmin.Discount.Admin_AddDiscount_Activity;
+import com.sinhvien.onlinefoodshop.Activity.ForAdmin.Product.Admin_ProductList_Activity;
+import com.sinhvien.onlinefoodshop.Activity.ForAdmin.User.Admin_UserList_Activity;
+import com.sinhvien.onlinefoodshop.Activity.ForAdmin.Category.Admin_CategoryList_Activity;
+import com.sinhvien.onlinefoodshop.Activity.MainActivity;
 import com.sinhvien.onlinefoodshop.R;
 
 public class Admin_HomePage_Activity extends AppCompatActivity {
@@ -26,6 +32,7 @@ public class Admin_HomePage_Activity extends AppCompatActivity {
         Button btnViewProducts = findViewById(R.id.btnViewProducts);
         Button btnViewCategories = findViewById(R.id.btnViewCategories);
         Button btnLogout = findViewById(R.id.btnLogout);
+        Button btnManageDiscounts = findViewById(R.id.btnManageDiscounts);
 
         // Optional: Set dynamic counts (replace with actual data)
         TextView tvUserCount = findViewById(R.id.tvUserCount);
@@ -52,6 +59,12 @@ public class Admin_HomePage_Activity extends AppCompatActivity {
 
         btnViewCategories.setOnClickListener(v -> {
             Intent intent = new Intent(this, Admin_CategoryList_Activity.class);
+            startActivity(intent);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        });
+
+        btnManageDiscounts.setOnClickListener(v->{
+            Intent intent = new Intent(this, Admin_AddDiscount_Activity.class);
             startActivity(intent);
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         });

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners
+        android:topLeftRadius="10dp"
+        android:topRightRadius="10dp"
+        /> <!-- Phải khớp với cardCornerRadius của CardView -->
+    <solid android:color="#FFFFFF" /> <!-- Màu nền (có thể bỏ nếu không cần) -->
+</shape>

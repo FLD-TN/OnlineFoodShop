@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
-import com.sinhvien.onlinefoodshop.Activity.ProductListActivity;
+import com.sinhvien.onlinefoodshop.Activity.ForUser.ProductListActivity;
 import com.sinhvien.onlinefoodshop.Adapter.BannerAdapter;
 import com.sinhvien.onlinefoodshop.Adapter.CategoryAdapter;
 import com.sinhvien.onlinefoodshop.Adapter.UserProductAdapter;

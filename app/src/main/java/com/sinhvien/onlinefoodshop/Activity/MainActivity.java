@@ -3,9 +3,13 @@ package com.sinhvien.onlinefoodshop.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.WindowManager;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.sinhvien.onlinefoodshop.Activity.ForAdmin.Admin_HomePage_Activity;
+import com.sinhvien.onlinefoodshop.Activity.ForUser.MainPageActivity;
 import com.sinhvien.onlinefoodshop.Adapter.ViewPagerAdapter;
 import com.sinhvien.onlinefoodshop.databinding.ActivityMainBinding;
 
@@ -18,6 +22,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
+        getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
+        );
         setContentView(binding.getRoot());
 
         SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);

@@ -7,7 +7,9 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" tools:ignore="ScopedStorage" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
     <application
@@ -20,47 +22,56 @@
         android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.OnlineFoodShop"
+        android:theme="@style/Base.Theme.OnlineFoodShop"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".Activity.Admin_CategoryDetails_Activity"
+            android:name=".Activity.ForAdmin.Discount.Admin_AddDiscount_Activity"
             android:exported="false" />
         <activity
-            android:name=".Activity.Admin_EditCategory_Activity"
+            android:name=".Activity.ForUser.Product_Details_Activity"
             android:exported="false" />
         <activity
-            android:name=".Activity.Admin_AddCategory_Activity"
+            android:name=".Activity.CartActivity"
             android:exported="false" />
         <activity
-            android:name=".Activity.Admin_CategoryList_Activity"
+            android:name=".Activity.ForAdmin.Category.Admin_CategoryDetails_Activity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.ForAdmin.Category.Admin_EditCategory_Activity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.ForAdmin.Category.Admin_AddCategory_Activity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.ForAdmin.Category.Admin_CategoryList_Activity"
             android:exported="false" /> <!-- ADMIN - PRODUCT -->
         <activity
-            android:name=".Activity.Admin_ProductList_Activity"
+            android:name=".Activity.ForAdmin.Product.Admin_ProductList_Activity"
             android:exported="false" />
         <activity
-            android:name=".Activity.ProductListActivity"
+            android:name=".Activity.ForUser.ProductListActivity"
             android:exported="false" />
         <activity
-            android:name=".Activity.Admin_EditProduct_Activity"
+            android:name=".Activity.ForAdmin.Product.Admin_EditProduct_Activity"
             android:exported="false" />
         <activity
-            android:name=".Activity.Admin_ProductDetails_Activity"
+            android:name=".Activity.ForAdmin.Product.Admin_ProductDetails_Activity"
             android:exported="false" />
         <activity
-            android:name=".Activity.Admin_AddProduct_Activity"
+            android:name=".Activity.ForAdmin.Product.Admin_AddProduct_Activity"
             android:exported="false" />
         <activity
-            android:name=".Activity.Admin_AddUser_Activity"
+            android:name=".Activity.ForAdmin.User.Admin_AddUser_Activity"
             android:exported="false" />
         <activity
-            android:name=".Activity.Admin_EditUser_Activity"
+            android:name=".Activity.ForAdmin.User.Admin_EditUser_Activity"
             android:exported="false" />
         <activity
-            android:name=".Activity.Admin_UserDetails_Activity"
+            android:name=".Activity.ForAdmin.User.Admin_UserDetails_Activity"
             android:exported="false" />
         <activity
-            android:name=".Activity.Admin_UserList_Activity"
+            android:name=".Activity.ForAdmin.User.Admin_UserList_Activity"
             android:exported="false" />
         <activity
             android:name=".Activity.IntroActivity"
@@ -72,7 +83,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activity.Admin_HomePage_Activity"
+            android:name=".Activity.ForAdmin.Admin_HomePage_Activity"
             android:exported="false" />
         <activity
             android:name=".Activity.MainActivity"
@@ -85,9 +96,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activity.MainPageActivity"
-            android:exported="true"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            android:name=".Activity.ForUser.MainPageActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

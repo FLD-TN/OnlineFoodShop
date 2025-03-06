@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="?attr/selectableItemBackgroundBorderless"
+    android:shape="rectangle">
+    <corners android:radius="20dp" /> <!-- Điều chỉnh độ bo tròn -->
+    <solid android:color="#33C757" /> <!-- Màu nền xanh -->
+    <padding
+        android:left="10dp"
+        android:right="10dp" />
+
+</shape>

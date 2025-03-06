@@ -1,4 +1,4 @@
-package com.sinhvien.onlinefoodshop.Activity;
+package com.sinhvien.onlinefoodshop.Activity.ForAdmin.Product;
 
 import android.Manifest;
 import android.content.Intent;
@@ -7,8 +7,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -30,8 +32,11 @@ import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import com.sinhvien.onlinefoodshop.ApiService;
+import com.sinhvien.onlinefoodshop.Model.CategoryModel;
 import com.sinhvien.onlinefoodshop.Model.ProductModel;
 import com.sinhvien.onlinefoodshop.R;
+import com.squareup.picasso.Picasso;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -40,12 +45,15 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 public class Admin_AddProduct_Activity extends AppCompatActivity {
     private static final String TAG = "Admin_AddProduct_Activity";
-    private EditText edtProductName, edtProductPrice, edtDescription, edtCategory;
+    private EditText edtProductName, edtProductPrice, edtDescription;
+    private Spinner spinnerCategory;
     private Button btnSave, btnCancel,btnPickImage;
     private ApiService apiService;
     private Uri imageUri;
@@ -54,6 +62,7 @@ public class Admin_AddProduct_Activity extends AppCompatActivity {
     private String imageUrl,folderParentId;
     private static final int REQUEST_STORAGE_PERMISSION = 100;
     private static final String FOLDER_NAME = "FutureFoodShop_Images";
+    private List<CategoryModel> categoryList = new ArrayList<>();
 
     private final ActivityResultLauncher<Intent> signInLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -213,7 +222,7 @@ public class Admin_AddProduct_Activity extends AppCompatActivity {
             // Cập nhật quyền của file để mọi người có thể xem
             setFilePublic(uploadedFile.getId());
 
-            imageUrl = "https://drive.google.com/uc?export=download&id=" + uploadedFile.getId();
+                imageUrl = "https://drive.google.com/uc?export=download&id=" + uploadedFile.getId();
             runOnUiThread(() -> {
                 Toast.makeText(this, "Upload thành công", Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "Uploaded image URL: " + imageUrl);
@@ -249,7 +258,7 @@ public class Admin_AddProduct_Activity extends AppCompatActivity {
         edtProductName = findViewById(R.id.edtProductName);
         edtProductPrice = findViewById(R.id.edtProductPrice);
         edtDescription = findViewById(R.id.edtDescription);
-        edtCategory = findViewById(R.id.edtCategory);
+        spinnerCategory = findViewById(R.id.spinnerCategory);
         btnPickImage = findViewById(R.id.btnPickImage);
         btnSave = findViewById(R.id.btnSave);
         btnCancel = findViewById(R.id.btnCancel);
@@ -260,9 +269,40 @@ public class Admin_AddProduct_Activity extends AppCompatActivity {
                 .build();
         apiService = retrofit.create(ApiService.class);
 
+        loadCategories();
         btnPickImage.setOnClickListener(v -> checkAndRequestPermissions());
         btnSave.setOnClickListener(v -> addProduct());
         btnCancel.setOnClickListener(v -> finish());
+    }
+
+    private void loadCategories() {
+        Call<List<CategoryModel>> call = apiService.getCategories();
+        call.enqueue(new Callback<List<CategoryModel>>() {
+            @Override
+            public void onResponse(Call<List<CategoryModel>> call, Response<List<CategoryModel>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    categoryList = response.body();
+                    List<String> categoryNames = new ArrayList<>();
+                    for (CategoryModel category : categoryList) {
+                        categoryNames.add(category.getCategoryName());
+                    }
+                    // Cài đặt adapter cho Spinner
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(Admin_AddProduct_Activity.this,
+                            android.R.layout.simple_spinner_item, categoryNames);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinnerCategory.setAdapter(adapter);
+                } else {
+                    Log.e(TAG, "Failed to load categories. Code: " + response.code());
+                    Toast.makeText(Admin_AddProduct_Activity.this, "Không thể tải danh mục", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<CategoryModel>> call, Throwable t) {
+                Log.e(TAG, "Error loading categories: " + t.getMessage());
+                Toast.makeText(Admin_AddProduct_Activity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private java.io.File uriToFile(Uri uri) throws Exception {
@@ -282,7 +322,7 @@ public class Admin_AddProduct_Activity extends AppCompatActivity {
         String productName = edtProductName.getText().toString().trim();
         String priceStr = edtProductPrice.getText().toString().trim();
         String description = edtDescription.getText().toString().trim();
-        String category = edtCategory.getText().toString().trim();
+        String category = spinnerCategory.getSelectedItem() != null ? spinnerCategory.getSelectedItem().toString() : ""; // Lấy danh mục từ Spinner
         btnPickImage = findViewById(R.id.btnPickImage);
 
         if (productName.isEmpty() || priceStr.isEmpty()) {
@@ -291,8 +331,8 @@ public class Admin_AddProduct_Activity extends AppCompatActivity {
         }
 
         if (imageUrl == null || imageUrl.isEmpty()) {
-            Toast.makeText(this, "Vui lòng chọn và tải lên hình ảnh", Toast.LENGTH_SHORT).show();
-            return;
+            Picasso.get()
+                    .load(R.drawable.placeholder_image);
         }
 
         double productPrice;

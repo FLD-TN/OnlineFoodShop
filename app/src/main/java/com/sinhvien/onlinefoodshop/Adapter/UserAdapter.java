@@ -9,7 +9,7 @@ import android.widget.TextView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.sinhvien.onlinefoodshop.Activity.Admin_UserDetails_Activity;
+import com.sinhvien.onlinefoodshop.Activity.ForAdmin.User.Admin_UserDetails_Activity;
 import com.sinhvien.onlinefoodshop.Model.UserModel;
 import com.sinhvien.onlinefoodshop.R;
 import java.util.ArrayList;

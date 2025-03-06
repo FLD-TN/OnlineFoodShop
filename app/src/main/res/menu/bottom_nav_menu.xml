@@ -7,14 +7,14 @@
 
 
     <item
-        android:id="@+id/bottom_nav_cart"
-        android:title="Giỏ hàng"
-        android:icon="@drawable/ic_bag"/>
-
-    <item
         android:id="@+id/bottom_nav_fav"
         android:title="Yêu Thích"
         android:icon="@drawable/heart_icon"/>
+
+    <item
+        android:id="@+id/bottom_nav_cart"
+        android:title="Giỏ hàng"
+        android:icon="@drawable/ic_bag"/>
 
     <item
         android:id="@+id/bottom_nav_notification"
