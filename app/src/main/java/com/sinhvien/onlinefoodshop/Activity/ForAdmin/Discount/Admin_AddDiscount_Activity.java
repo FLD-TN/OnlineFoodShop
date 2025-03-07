@@ -4,8 +4,10 @@ import android.app.AlertDialog;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -29,6 +31,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class Admin_AddDiscount_Activity extends AppCompatActivity implements ProductAdapter.OnDiscountActionListener {
+    private static final String TAG = "Admin_AddDiscount_Activity";
     private EditText etSearchProduct;
     private Spinner spinnerCategory;
     private RecyclerView recyclerProducts;
@@ -44,25 +47,26 @@ public class Admin_AddDiscount_Activity extends AppCompatActivity implements Pro
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_add_discount);
 
+        // Ánh xạ giao diện
         etSearchProduct = findViewById(R.id.etSearchProduct);
         spinnerCategory = findViewById(R.id.spinnerCategory);
         recyclerProducts = findViewById(R.id.recyclerProducts);
         btnAddDiscount = findViewById(R.id.btnAddDiscount);
         btnApplyCategoryDiscount = findViewById(R.id.btnApplyCategoryDiscount);
+
+        // Cấu hình RecyclerView
         recyclerProducts.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new ProductAdapter(null, this);
+        recyclerProducts.setAdapter(adapter);
 
         // Khởi tạo ApiService
         apiService = RetrofitClient.getApiService();
 
-        // Khởi tạo adapter
-        adapter = new ProductAdapter(null, this);
-        recyclerProducts.setAdapter(adapter);
-
-        // Tải danh mục và sản phẩm từ backend
+        // Tải dữ liệu
         loadCategories();
         loadProducts();
 
-        // Tìm kiếm sản phẩm
+        // Sự kiện tìm kiếm
         etSearchProduct.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -72,19 +76,12 @@ public class Admin_AddDiscount_Activity extends AppCompatActivity implements Pro
 
             @Override
             public void afterTextChanged(Editable s) {
-                String searchQuery = s.toString().trim();
-                if (searchQuery.isEmpty()) {
-                    filterProductsByCategory(((CategoryModel) spinnerCategory.getSelectedItem()).getCategoryId());
-                } else {
-                    searchProductsByName(searchQuery);
-                }
+                filterProducts(s.toString().trim());
             }
         });
 
-        // Nút thêm khuyến mãi cho sản phẩm
+        // Sự kiện nút
         btnAddDiscount.setOnClickListener(v -> showAddDiscountDialog(false));
-
-        // Nút áp dụng khuyến mãi cho danh mục
         btnApplyCategoryDiscount.setOnClickListener(v -> showAddDiscountDialog(true));
     }
 
@@ -94,36 +91,62 @@ public class Admin_AddDiscount_Activity extends AppCompatActivity implements Pro
             public void onResponse(Call<List<CategoryModel>> call, Response<List<CategoryModel>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     categoryList.clear();
+
+                    // Thêm danh mục "Tất cả"
                     CategoryModel allCategory = new CategoryModel();
                     allCategory.setCategoryId("all");
                     allCategory.setCategoryName("Tất cả");
-                    categoryList.add(allCategory); // Thêm danh mục "Tất cả"
+                    categoryList.add(allCategory);
+
+                    // Thêm các danh mục từ server
                     categoryList.addAll(response.body());
-                    ArrayAdapter<CategoryModel> spinnerAdapter = new ArrayAdapter<>(
-                            Admin_AddDiscount_Activity.this,
-                            android.R.layout.simple_spinner_item,
-                            categoryList
-                    );
+                    for (CategoryModel category : response.body()) {
+                        if (category.getCategoryName().isEmpty()) {
+                            category.setCategoryName("Danh mục " + category.getCategoryId().substring(0, 8) + "...");
+                        }
+                    }
+
+                    // Tùy chỉnh ArrayAdapter để hiển thị chỉ categoryName
+                    ArrayAdapter<CategoryModel> spinnerAdapter = new ArrayAdapter<CategoryModel>(
+                            Admin_AddDiscount_Activity.this, android.R.layout.simple_spinner_item, categoryList) {
+                        @Override
+                        public View getView(int position, View convertView, ViewGroup parent) {
+                            View view = super.getView(position, convertView, parent);
+                            ((TextView) view.findViewById(android.R.id.text1)).setText(categoryList.get(position).getCategoryName());
+                            return view;
+                        }
+
+                        @Override
+                        public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                            View view = super.getDropDownView(position, convertView, parent);
+                            ((TextView) view.findViewById(android.R.id.text1)).setText(categoryList.get(position).getCategoryName());
+                            return view;
+                        }
+                    };
                     spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinnerCategory.setAdapter(spinnerAdapter);
+
+                    // Sự kiện chọn danh mục
                     spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                            CategoryModel selectedCategory = (CategoryModel) parent.getItemAtPosition(position);
-                            filterProductsByCategory(selectedCategory.getCategoryId());
+                            filterProductsByCategory(categoryList.get(position).getCategoryName());
                         }
 
                         @Override
                         public void onNothingSelected(AdapterView<?> parent) {}
                     });
+
+                    // Khởi tạo lần đầu
+                    filterProductsByCategory("Tất cả");
                 } else {
-                    Toast.makeText(Admin_AddDiscount_Activity.this, "Không tải được danh mục", Toast.LENGTH_SHORT).show();
+                    showToast("Không tải được danh mục");
                 }
             }
 
             @Override
             public void onFailure(Call<List<CategoryModel>> call, Throwable t) {
-                Toast.makeText(Admin_AddDiscount_Activity.this, "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                showToast("Lỗi tải danh mục: " + t.getMessage());
             }
         });
     }
@@ -135,55 +158,86 @@ public class Admin_AddDiscount_Activity extends AppCompatActivity implements Pro
                 if (response.isSuccessful() && response.body() != null) {
                     productList.clear();
                     productList.addAll(response.body());
-                    filteredProductList.clear();
-                    filteredProductList.addAll(productList);
-                    adapter.setProductList(filteredProductList);
+
+                    CategoryModel selectedCategory = (CategoryModel) spinnerCategory.getSelectedItem();
+                    filterProductsByCategory(selectedCategory != null ? selectedCategory.getCategoryName() : "Tất cả");
                 } else {
-                    Toast.makeText(Admin_AddDiscount_Activity.this, "Không tải được sản phẩm", Toast.LENGTH_SHORT).show();
+                    showToast("Không tải được sản phẩm");
                 }
             }
 
             @Override
             public void onFailure(Call<List<ProductModel>> call, Throwable t) {
-                Toast.makeText(Admin_AddDiscount_Activity.this, "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                showToast("Lỗi tải sản phẩm: " + t.getMessage());
             }
         });
     }
 
     private void searchProductsByName(String name) {
+        if (productList.isEmpty()) {
+            showToast("Danh sách sản phẩm trống");
+            filteredProductList.clear();
+            adapter.setProductList(filteredProductList);
+            return;
+        }
+
         apiService.searchProductsByName(name).enqueue(new Callback<List<ProductModel>>() {
             @Override
             public void onResponse(Call<List<ProductModel>> call, Response<List<ProductModel>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    filteredProductList.clear();
+                filteredProductList.clear();
+                if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
                     filteredProductList.addAll(response.body());
-                    adapter.setProductList(filteredProductList);
                 } else {
-                    Toast.makeText(Admin_AddDiscount_Activity.this, "Không tìm thấy sản phẩm", Toast.LENGTH_SHORT).show();
+                    searchLocally(name);
                 }
+                adapter.setProductList(filteredProductList);
             }
 
             @Override
             public void onFailure(Call<List<ProductModel>> call, Throwable t) {
-                Toast.makeText(Admin_AddDiscount_Activity.this, "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                showToast("Lỗi tìm kiếm qua API: " + t.getMessage());
+                filteredProductList.clear();
+                searchLocally(name);
+                adapter.setProductList(filteredProductList);
             }
         });
     }
 
-    private void filterProductsByCategory(String categoryId) {
+    private void searchLocally(String name) {
+        String searchLower = name.toLowerCase();
+        for (ProductModel product : productList) {
+            if (product.getProductName() != null && product.getProductName().toLowerCase().contains(searchLower)) {
+                filteredProductList.add(product);
+            }
+        }
+        if (filteredProductList.isEmpty()) {
+            showToast("Không tìm thấy sản phẩm với từ khóa: " + name);
+        } else {
+            showToast("Tìm kiếm cục bộ: Đã tìm thấy " + filteredProductList.size() + " sản phẩm");
+        }
+    }
+
+    private void filterProductsByCategory(String categoryName) {
         filteredProductList.clear();
-        if (categoryId.equals("all")) {
+        if (categoryName.equals("Tất cả")) {
             filteredProductList.addAll(productList);
         } else {
             for (ProductModel product : productList) {
-                if (product.getCategory().equals(categoryId)) {
+                if (product.getCategory() != null && product.getCategory().trim().toLowerCase().equals(categoryName.trim().toLowerCase())) {
                     filteredProductList.add(product);
                 }
             }
+            if (filteredProductList.isEmpty()) {
+                showToast("Không tìm thấy sản phẩm cho danh mục: " + categoryName);
+            }
         }
-        String searchQuery = etSearchProduct.getText().toString().trim();
+        adapter.setProductList(filteredProductList);
+    }
+
+    private void filterProducts(String searchQuery) {
         if (searchQuery.isEmpty()) {
-            adapter.setProductList(filteredProductList);
+            CategoryModel selectedCategory = (CategoryModel) spinnerCategory.getSelectedItem();
+            filterProductsByCategory(selectedCategory != null ? selectedCategory.getCategoryName() : "Tất cả");
         } else {
             searchProductsByName(searchQuery);
         }
@@ -196,108 +250,106 @@ public class Admin_AddDiscount_Activity extends AppCompatActivity implements Pro
         Spinner spinnerProduct = dialogView.findViewById(R.id.spinnerProduct);
         TextView tvProductLabel = dialogView.findViewById(R.id.tvProductLabel);
 
+        setupDiscountTypeSpinner(spinnerDiscountType);
         if (forCategory) {
             tvProductLabel.setVisibility(View.GONE);
             spinnerProduct.setVisibility(View.GONE);
         } else {
-            tvProductLabel.setVisibility(View.VISIBLE);
-            spinnerProduct.setVisibility(View.VISIBLE);
-            List<String> productNames = new ArrayList<>();
-            for (ProductModel product : productList) {
-                productNames.add(product.getProductName());
-            }
-            ArrayAdapter<String> productAdapter = new ArrayAdapter<>(
-                    this,
-                    android.R.layout.simple_spinner_item,
-                    productNames
-            );
-            productAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinnerProduct.setAdapter(productAdapter);
+            setupProductSpinner(spinnerProduct);
         }
-
-        List<String> types = new ArrayList<>();
-        types.add("Theo %");
-        types.add("Theo số tiền");
-        ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_spinner_item,
-                types
-        );
-        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerDiscountType.setAdapter(typeAdapter);
 
         new AlertDialog.Builder(this)
                 .setTitle(forCategory ? "Áp dụng khuyến mãi cho danh mục" : "Thêm khuyến mãi")
                 .setView(dialogView)
                 .setPositiveButton("Lưu", (dialog, which) -> {
-                    String valueStr = etDiscountValue.getText().toString().trim();
-                    if (valueStr.isEmpty()) {
-                        etDiscountValue.setError("Vui lòng nhập giá trị giảm giá");
-                        return;
-                    }
-                    int value;
-                    try {
-                        value = Integer.parseInt(valueStr);
-                        if (value <= 0) {
-                            etDiscountValue.setError("Giá trị phải lớn hơn 0");
-                            return;
-                        }
-                    } catch (NumberFormatException e) {
-                        etDiscountValue.setError("Giá trị không hợp lệ");
-                        return;
-                    }
+                    int discountValue = validateDiscountValue(etDiscountValue);
+                    if (discountValue == -1) return;
 
-                    String type = spinnerDiscountType.getSelectedItem().toString();
-
+                    String discountType = spinnerDiscountType.getSelectedItem().toString();
                     if (forCategory) {
-                        CategoryModel selectedCategory = (CategoryModel) spinnerCategory.getSelectedItem();
-                        if (!selectedCategory.getCategoryId().equals("all")) {
-                            for (ProductModel product : productList) {
-                                if (product.getCategory().equals(selectedCategory.getCategoryId())) {
-                                    if (type.equals("Theo %")) {
-                                        product.setDiscount(value);
-                                        product.setDiscountAmount(0);
-                                    } else {
-                                        product.setDiscountAmount(value);
-                                        product.setDiscount(0);
-                                    }
-                                    updateProductOnServer(product);
-                                }
-                            }
-                        }
+                        applyDiscountToCategory(discountType, discountValue);
                     } else {
-                        int selectedProductIndex = spinnerProduct.getSelectedItemPosition();
-                        ProductModel selectedProduct = productList.get(selectedProductIndex);
-                        if (type.equals("Theo %")) {
-                            selectedProduct.setDiscount(value);
-                            selectedProduct.setDiscountAmount(0);
-                        } else {
-                            selectedProduct.setDiscountAmount(value);
-                            selectedProduct.setDiscount(0);
-                        }
-                        updateProductOnServer(selectedProduct);
+                        applyDiscountToProduct(spinnerProduct, discountType, discountValue);
                     }
                 })
                 .setNegativeButton("Hủy", null)
                 .show();
     }
 
+    private void setupDiscountTypeSpinner(Spinner spinnerDiscountType) {
+        ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item,
+                new String[]{"Theo %", "Theo số tiền"});
+        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerDiscountType.setAdapter(typeAdapter);
+    }
+
+    private void setupProductSpinner(Spinner spinnerProduct) {
+        List<String> productNames = new ArrayList<>();
+        for (ProductModel product : productList) {
+            productNames.add(product.getProductName());
+        }
+        ArrayAdapter<String> productAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, productNames);
+        productAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerProduct.setAdapter(productAdapter);
+    }
+
+    private int validateDiscountValue(EditText etDiscountValue) {
+        String valueStr = etDiscountValue.getText().toString().trim();
+        if (valueStr.isEmpty()) {
+            etDiscountValue.setError("Vui lòng nhập giá trị giảm giá");
+            return -1;
+        }
+        try {
+            int value = Integer.parseInt(valueStr);
+            if (value <= 0) {
+                etDiscountValue.setError("Giá trị phải lớn hơn 0");
+                return -1;
+            }
+            return value;
+        } catch (NumberFormatException e) {
+            etDiscountValue.setError("Giá trị không hợp lệ");
+            return -1;
+        }
+    }
+
+    private void applyDiscountToCategory(String discountType, int discountValue) {
+        CategoryModel selectedCategory = (CategoryModel) spinnerCategory.getSelectedItem();
+        if (selectedCategory == null || selectedCategory.getCategoryId().equals("all")) return;
+
+        for (ProductModel product : productList) {
+            if (product.getCategory() != null && product.getCategory().trim().toLowerCase().equals(selectedCategory.getCategoryName().trim().toLowerCase())) {
+                updateProductDiscount(product, discountType, discountValue);
+            }
+        }
+    }
+
+    private void applyDiscountToProduct(Spinner spinnerProduct, String discountType, int discountValue) {
+        ProductModel selectedProduct = productList.get(spinnerProduct.getSelectedItemPosition());
+        updateProductDiscount(selectedProduct, discountType, discountValue);
+    }
+
+    private void updateProductDiscount(ProductModel product, String discountType, int discountValue) {
+        if (discountType.equals("Theo %")) {
+            product.setDiscount(discountValue);
+            product.setDiscountAmount(0);
+        } else {
+            product.setDiscountAmount(discountValue);
+            product.setDiscount(0);
+        }
+        updateProductOnServer(product);
+    }
+
     private void updateProductOnServer(ProductModel product) {
         apiService.updateProduct(product.getProductID(), product).enqueue(new Callback<ProductModel>() {
             @Override
             public void onResponse(Call<ProductModel> call, Response<ProductModel> response) {
-                if (response.isSuccessful()) {
-                    Toast.makeText(Admin_AddDiscount_Activity.this, "Cập nhật khuyến mãi thành công", Toast.LENGTH_SHORT).show();
-                    // Cập nhật lại danh sách sản phẩm
-                    loadProducts();
-                } else {
-                    Toast.makeText(Admin_AddDiscount_Activity.this, "Cập nhật khuyến mãi thất bại", Toast.LENGTH_SHORT).show();
-                }
+                showToast(response.isSuccessful() ? "Cập nhật khuyến mãi thành công" : "Cập nhật khuyến mãi thất bại");
+                if (response.isSuccessful()) loadProducts();
             }
 
             @Override
             public void onFailure(Call<ProductModel> call, Throwable t) {
-                Toast.makeText(Admin_AddDiscount_Activity.this, "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                showToast("Lỗi cập nhật: " + t.getMessage());
             }
         });
     }
@@ -307,11 +359,10 @@ public class Admin_AddDiscount_Activity extends AppCompatActivity implements Pro
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_discount, null);
         EditText etDiscountValue = dialogView.findViewById(R.id.etDiscountValue);
         Spinner spinnerDiscountType = dialogView.findViewById(R.id.spinnerDiscountType);
-        Spinner spinnerProduct = dialogView.findViewById(R.id.spinnerProduct);
-        TextView tvProductLabel = dialogView.findViewById(R.id.tvProductLabel);
-        tvProductLabel.setVisibility(View.GONE);
-        spinnerProduct.setVisibility(View.GONE);
+        dialogView.findViewById(R.id.tvProductLabel).setVisibility(View.GONE);
+        dialogView.findViewById(R.id.spinnerProduct).setVisibility(View.GONE);
 
+        setupDiscountTypeSpinner(spinnerDiscountType);
         if (product.getDiscount() > 0) {
             etDiscountValue.setText(String.valueOf(product.getDiscount()));
             spinnerDiscountType.setSelection(0);
@@ -320,55 +371,27 @@ public class Admin_AddDiscount_Activity extends AppCompatActivity implements Pro
             spinnerDiscountType.setSelection(1);
         }
 
-        List<String> types = new ArrayList<>();
-        types.add("Theo %");
-        types.add("Theo số tiền");
-        ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_spinner_item,
-                types
-        );
-        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerDiscountType.setAdapter(typeAdapter);
-
         new AlertDialog.Builder(this)
                 .setTitle("Chỉnh sửa khuyến mãi")
                 .setView(dialogView)
                 .setPositiveButton("Lưu", (dialog, which) -> {
-                    String valueStr = etDiscountValue.getText().toString().trim();
-                    if (valueStr.isEmpty()) {
-                        etDiscountValue.setError("Vui lòng nhập giá trị giảm giá");
-                        return;
+                    int discountValue = validateDiscountValue(etDiscountValue);
+                    if (discountValue != -1) {
+                        updateProductDiscount(product, spinnerDiscountType.getSelectedItem().toString(), discountValue);
                     }
-                    int value;
-                    try {
-                        value = Integer.parseInt(valueStr);
-                        if (value <= 0) {
-                            etDiscountValue.setError("Giá trị phải lớn hơn 0");
-                            return;
-                        }
-                    } catch (NumberFormatException e) {
-                        etDiscountValue.setError("Giá trị không hợp lệ");
-                        return;
-                    }
-
-                    String type = spinnerDiscountType.getSelectedItem().toString();
-                    if (type.equals("Theo %")) {
-                        product.setDiscount(value);
-                        product.setDiscountAmount(0);
-                    } else {
-                        product.setDiscountAmount(value);
-                        product.setDiscount(0);
-                    }
-                    updateProductOnServer(product);
                 })
                 .setNegativeButton("Hủy", null)
                 .show();
     }
+
     @Override
     public void onRemoveDiscount(ProductModel product) {
         product.setDiscount(0);
         product.setDiscountAmount(0);
         updateProductOnServer(product);
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }

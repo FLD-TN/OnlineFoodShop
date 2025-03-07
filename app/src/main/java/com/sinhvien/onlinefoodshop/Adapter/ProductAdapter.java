@@ -95,10 +95,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
         // Hiển thị trạng thái khuyến mãi
         if (product.getDiscount() > 0) {
-            holder.tvDiscount.setText("Giảm" + product.getDiscount() + "%");
+            holder.tvDiscount.setText("Giảm " + product.getDiscount() + "%");
             holder.btnRemoveDiscount.setVisibility(View.VISIBLE);
         } else if (product.getDiscountAmount() > 0) {
-            holder.tvDiscount.setText("Giảm" + String.format("%,d đ", product.getDiscountAmount()));
+            holder.tvDiscount.setText("Giảm " + String.format("%,d đ", product.getDiscountAmount()));
             holder.btnRemoveDiscount.setVisibility(View.VISIBLE);
         } else {
             holder.tvDiscount.setText("Không có khuyến mãi");

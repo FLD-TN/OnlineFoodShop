@@ -2,6 +2,7 @@ package com.sinhvien.onlinefoodshop;
 
 import com.google.gson.annotations.SerializedName;
 import com.sinhvien.onlinefoodshop.Model.CategoryModel;
+import com.sinhvien.onlinefoodshop.Model.NotificationModel;
 import com.sinhvien.onlinefoodshop.Model.ProductModel;
 import com.sinhvien.onlinefoodshop.Model.UserModel;
 import java.util.List;
@@ -65,6 +66,9 @@ public interface ApiService {
 
     @GET("api/categories/search")
     Call<List<CategoryModel>> searchCategoriesByName(@Query("name") String name); // Endpoint tìm kiếm
+
+    @GET("/api/getNotifications")
+    Call<List<NotificationModel>> getNotifications();
 
     class LoginRequest {
         @SerializedName("email")

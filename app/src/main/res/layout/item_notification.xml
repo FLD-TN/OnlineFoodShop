@@ -24,7 +24,7 @@
         android:layout_weight="1">
 
         <TextView
-            android:id="@+id/tvNotificationTitle"
+            android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Tiêu đề thông báo"
@@ -32,7 +32,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/tvNotificationContent"
+            android:id="@+id/tvMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Nội dung chi tiết của thông báo này."
@@ -42,7 +42,7 @@
             android:ellipsize="end" />
 
         <TextView
-            android:id="@+id/tvNotificationTime"
+            android:id="@+id/tvTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="5 phút trước"

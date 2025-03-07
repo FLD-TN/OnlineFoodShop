@@ -1,5 +1,6 @@
 package com.sinhvien.onlinefoodshop.Adapter;
 
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,50 +8,47 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.sinhvien.onlinefoodshop.Model.NotificationModel;
 import com.sinhvien.onlinefoodshop.R;
 import java.util.List;
 
-public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder> {
+public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.ViewHolder> {
+    private List<NotificationModel> notifications;
 
-    private final List<String> notificationList;
-
-    public NotificationAdapter(List<String> notificationList) {
-        this.notificationList = notificationList;
+    public NotificationAdapter(List<NotificationModel> notifications) {
+        this.notifications = notifications;
     }
 
     @NonNull
     @Override
-    public NotificationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_notification, parent, false);
-        return new NotificationViewHolder(view);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull NotificationViewHolder holder, int position) {
-        String notification = notificationList.get(position);
-
-        // Tạm thời sử dụng dữ liệu giả
-        holder.tvNotificationTitle.setText("Thông báo #" + (position + 1));
-        holder.tvNotificationContent.setText("Nội dung thông báo: " + notification);
-        holder.tvNotificationTime.setText((position + 1) * 5 + " phút trước");
-        holder.ivNotificationIcon.setImageResource(R.drawable.pho_picture);
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        NotificationModel notification = notifications.get(position);
+        holder.tvTitle.setText(notification.getTitle());
+        holder.tvMessage.setText(notification.getMessage());
+        holder.tvTime.setText(DateFormat.format("dd/MM/yyyy HH:mm", notification.getTimestamp()));
     }
 
     @Override
     public int getItemCount() {
-        return notificationList.size();
+        return notifications.size();
     }
 
-    public static class NotificationViewHolder extends RecyclerView.ViewHolder {
-        ImageView ivNotificationIcon;
-        TextView tvNotificationTitle, tvNotificationContent, tvNotificationTime;
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        TextView tvTitle, tvMessage, tvTime;
 
-        public NotificationViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            ivNotificationIcon = itemView.findViewById(R.id.ivNotificationIcon);
-            tvNotificationTitle = itemView.findViewById(R.id.tvNotificationTitle);
-            tvNotificationContent = itemView.findViewById(R.id.tvNotificationContent);
-            tvNotificationTime = itemView.findViewById(R.id.tvNotificationTime);
+            tvTitle = itemView.findViewById(R.id.tvTitle);
+            tvMessage = itemView.findViewById(R.id.tvMessage);
+            tvTime = itemView.findViewById(R.id.tvTime);
         }
     }
 }
+
