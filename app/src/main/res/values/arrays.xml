@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="order_status_filter">
+        <item>Tất cả</item>
+        <item>Chờ xác nhận</item>
+        <item>Xác nhận</item>
+        <item>Đang giao</item>
+        <item>Đã giao</item>
+        <item>Đã hủy</item>
+    </string-array>
+
+    <string-array name="order_status">
+        <item>Chờ xác nhận</item>
+        <item>Xác nhận</item>
+        <item>Đang giao</item>
+        <item>Đã giao</item>
+        <item>Đã hủy</item>
+    </string-array>
+</resources>

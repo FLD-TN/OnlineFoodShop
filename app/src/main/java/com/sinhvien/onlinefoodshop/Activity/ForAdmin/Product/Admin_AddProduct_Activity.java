@@ -35,6 +35,7 @@ import com.sinhvien.onlinefoodshop.ApiService;
 import com.sinhvien.onlinefoodshop.Model.CategoryModel;
 import com.sinhvien.onlinefoodshop.Model.ProductModel;
 import com.sinhvien.onlinefoodshop.R;
+import com.sinhvien.onlinefoodshop.Utils.Utils;
 import com.squareup.picasso.Picasso;
 
 import retrofit2.Call;
@@ -207,7 +208,7 @@ public class Admin_AddProduct_Activity extends AppCompatActivity {
 
     private void uploadImageToDrive(String folderId) {
         try {
-            java.io.File file = uriToFile(imageUri);
+            java.io.File file = Utils.uriToFile(this,imageUri);
             String fileName = "product_" + System.currentTimeMillis() + ".png";
 
             File fileMetadata = new File();
@@ -220,7 +221,7 @@ public class Admin_AddProduct_Activity extends AppCompatActivity {
                     .execute();
 
             // Cập nhật quyền của file để mọi người có thể xem
-            setFilePublic(uploadedFile.getId());
+            Utils.setFilePublic(driveService, uploadedFile.getId());
 
                 imageUrl = "https://drive.google.com/uc?export=download&id=" + uploadedFile.getId();
             runOnUiThread(() -> {
@@ -233,21 +234,6 @@ public class Admin_AddProduct_Activity extends AppCompatActivity {
         }
     }
 
-    private void setFilePublic(String fileId) {
-        try {
-            com.google.api.services.drive.model.Permission permission = new com.google.api.services.drive.model.Permission();
-            permission.setType("anyone");
-            permission.setRole("reader");
-
-            driveService.permissions().create(fileId, permission)
-                    .setFields("id")
-                    .execute();
-
-            Log.d(TAG, "File permission set to public: " + fileId);
-        } catch (Exception e) {
-            Log.e(TAG, "Error setting file permission: " + e.getMessage(), e);
-        }
-    }
 
 
     @Override
@@ -269,54 +255,13 @@ public class Admin_AddProduct_Activity extends AppCompatActivity {
                 .build();
         apiService = retrofit.create(ApiService.class);
 
-        loadCategories();
+        Utils.loadCategories(this,apiService,spinnerCategory);
         btnPickImage.setOnClickListener(v -> checkAndRequestPermissions());
         btnSave.setOnClickListener(v -> addProduct());
         btnCancel.setOnClickListener(v -> finish());
     }
 
-    private void loadCategories() {
-        Call<List<CategoryModel>> call = apiService.getCategories();
-        call.enqueue(new Callback<List<CategoryModel>>() {
-            @Override
-            public void onResponse(Call<List<CategoryModel>> call, Response<List<CategoryModel>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    categoryList = response.body();
-                    List<String> categoryNames = new ArrayList<>();
-                    for (CategoryModel category : categoryList) {
-                        categoryNames.add(category.getCategoryName());
-                    }
-                    // Cài đặt adapter cho Spinner
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(Admin_AddProduct_Activity.this,
-                            android.R.layout.simple_spinner_item, categoryNames);
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    spinnerCategory.setAdapter(adapter);
-                } else {
-                    Log.e(TAG, "Failed to load categories. Code: " + response.code());
-                    Toast.makeText(Admin_AddProduct_Activity.this, "Không thể tải danh mục", Toast.LENGTH_SHORT).show();
-                }
-            }
 
-            @Override
-            public void onFailure(Call<List<CategoryModel>> call, Throwable t) {
-                Log.e(TAG, "Error loading categories: " + t.getMessage());
-                Toast.makeText(Admin_AddProduct_Activity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private java.io.File uriToFile(Uri uri) throws Exception {
-        java.io.File file = new java.io.File(getCacheDir(), "temp_image_" + System.currentTimeMillis() + ".png");
-        try (InputStream inputStream = getContentResolver().openInputStream(uri);
-             FileOutputStream outputStream = new FileOutputStream(file)) {
-            byte[] buffer = new byte[1024];
-            int len;
-            while ((len = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, len);
-            }
-        }
-        return file;
-    }
     private void addProduct() {
         String productID = UUID.randomUUID().toString(); // Tạo ID ngẫu nhiên
         String productName = edtProductName.getText().toString().trim();

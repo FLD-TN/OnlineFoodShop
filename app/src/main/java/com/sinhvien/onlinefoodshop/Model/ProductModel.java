@@ -11,6 +11,13 @@ public class ProductModel implements Serializable {
     private String productImage;
     private int discount; // Giảm giá theo % (0 nếu không có khuyến mãi)
     private int discountAmount; // Giảm giá theo số tiền (0 nếu không có khuyến mãi)
+    private int quantity; // Thêm trường quantity
+
+    public ProductModel() {
+        this.discount = 0;
+        this.discountAmount = 0;
+        this.quantity = 1; // Mặc định là 1
+    }
 
     public ProductModel(String productName, double productPrice, String description, String category, String productImage) {
         this.productName = productName;
@@ -18,13 +25,9 @@ public class ProductModel implements Serializable {
         this.description = description;
         this.category = category;
         this.productImage = productImage;
-        this.discount = 0; // Mặc định không có khuyến mãi
-        this.discountAmount = 0;
-    }
-
-    public ProductModel() {
         this.discount = 0;
         this.discountAmount = 0;
+        this.quantity = 1;
     }
 
     // Getters và Setters
@@ -44,18 +47,6 @@ public class ProductModel implements Serializable {
     public void setDiscount(int discount) { this.discount = discount; }
     public int getDiscountAmount() { return discountAmount; }
     public void setDiscountAmount(int discountAmount) { this.discountAmount = discountAmount; }
-
-    @Override
-    public String toString() {
-        return "ProductModel{" +
-                "productID='" + productID + '\'' +
-                ", productName='" + productName + '\'' +
-                ", productPrice=" + productPrice +
-                ", description='" + description + '\'' +
-                ", category='" + category + '\'' +
-                ", productImage='" + productImage + '\'' +
-                ", discount=" + discount +
-                ", discountAmount=" + discountAmount +
-                '}';
-    }
+    public int getQuantity() { return quantity; }
+    public void setQuantity(int quantity) { this.quantity = quantity; }
 }

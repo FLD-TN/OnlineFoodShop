@@ -14,6 +14,7 @@ import com.sinhvien.onlinefoodshop.R;
 import com.sinhvien.onlinefoodshop.fragment.FavouriteFragment;
 import com.sinhvien.onlinefoodshop.fragment.HomeFragment;
 import com.sinhvien.onlinefoodshop.fragment.NotificationFragment;
+import com.sinhvien.onlinefoodshop.fragment.OrderFragment;
 import com.sinhvien.onlinefoodshop.fragment.UserInfomationFragment;
 
 public class MainPageActivity extends AppCompatActivity {
@@ -24,6 +25,7 @@ public class MainPageActivity extends AppCompatActivity {
     private static final int FRAGMENT_USER_INFORMATION = 3;
     private static final int FRAGMENT_NOTIFICATION = 4;
     private static final int FRAGMENT_FAVORITES = 5;
+    private static final int FRAGMENT_ORDER = 6;
 
     private int mCurrentFragment = FRAGMENT_HOME;
     private int mPreviousFragment = FRAGMENT_HOME; // Lưu Fragment trước khi vào Cart
@@ -34,6 +36,7 @@ public class MainPageActivity extends AppCompatActivity {
     private FavouriteFragment favouriteFragment = new FavouriteFragment();
     private NotificationFragment notificationFragment = new NotificationFragment();
     private UserInfomationFragment userInfomationFragment = new UserInfomationFragment();
+    private Fragment orderFragment = new OrderFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,9 +61,9 @@ public class MainPageActivity extends AppCompatActivity {
             } else if (id == R.id.bottom_nav_notification && mCurrentFragment != FRAGMENT_NOTIFICATION) {
                 replaceFragment(notificationFragment);
                 mCurrentFragment = FRAGMENT_NOTIFICATION;
-            } else if (id == R.id.bottom_nav_fav && mCurrentFragment != FRAGMENT_FAVORITES) {
-                replaceFragment(favouriteFragment);
-                mCurrentFragment = FRAGMENT_FAVORITES;
+            } else if (id == R.id.bottom_nav_order && mCurrentFragment != FRAGMENT_ORDER) {
+                replaceFragment(orderFragment);
+                mCurrentFragment = FRAGMENT_ORDER;
             } else if (id == R.id.bottom_nav_user && mCurrentFragment != FRAGMENT_USER_INFORMATION) {
                 replaceFragment(userInfomationFragment);
                 mCurrentFragment = FRAGMENT_USER_INFORMATION;
@@ -113,9 +116,9 @@ public class MainPageActivity extends AppCompatActivity {
                     replaceFragment(notificationFragment);
                     bottomNavigationView.setSelectedItemId(R.id.bottom_nav_notification);
                     break;
-                case FRAGMENT_FAVORITES:
-                    replaceFragment(favouriteFragment);
-                    bottomNavigationView.setSelectedItemId(R.id.bottom_nav_fav);
+                case FRAGMENT_ORDER:
+                    replaceFragment(orderFragment);
+                    bottomNavigationView.setSelectedItemId(R.id.bottom_nav_order);
                     break;
                 case FRAGMENT_USER_INFORMATION:
                     replaceFragment(userInfomationFragment);

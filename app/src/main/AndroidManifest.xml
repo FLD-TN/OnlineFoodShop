@@ -26,6 +26,12 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".Activity.ForUser.CheckoutActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.ForAdmin.Notification.Admin_AddNotification_Activity"
+            android:exported="false" />
+        <activity
             android:name=".Activity.ForAdmin.Discount.Admin_AddDiscount_Activity"
             android:exported="false" />
         <activity
@@ -104,13 +110,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service
-            android:name=".MyFirebaseMessagingService"
-            android:exported="false">
+
+        <activity
+            android:name=".Activity.ForAdmin.Order.Admin_OrderManagement_Activity"
+            android:exported="true">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-        </service>
+        </activity>
+
     </application>
 
 </manifest>

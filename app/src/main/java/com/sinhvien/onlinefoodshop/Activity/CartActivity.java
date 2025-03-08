@@ -1,5 +1,6 @@
 package com.sinhvien.onlinefoodshop.Activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -8,6 +9,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.sinhvien.onlinefoodshop.Activity.ForUser.CheckoutActivity;
 import com.sinhvien.onlinefoodshop.Adapter.CartAdapter;
 import com.sinhvien.onlinefoodshop.CartManager;
 import com.sinhvien.onlinefoodshop.R;
@@ -40,25 +43,20 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
 
         updateTotalPrice();
 
-        btnBack.setOnClickListener( v -> {
-            finish();
-        });
+        btnBack.setOnClickListener(v -> finish());
 
         btnCheckout.setOnClickListener(v -> {
             if (cartManager.getCartItems().isEmpty()) {
                 Toast.makeText(this, "Giỏ hàng trống!", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "Thanh toán thành công!", Toast.LENGTH_SHORT).show();
-                cartManager.clearCart();
-                cartAdapter.notifyDataSetChanged();
-                updateTotalPrice();
+                Intent intent = new Intent(this, CheckoutActivity.class);
+                startActivity(intent);
             }
         });
     }
 
     @Override
-    public void onBackPressed()
-    {
+    public void onBackPressed() {
         super.onBackPressed();
         finish();
     }

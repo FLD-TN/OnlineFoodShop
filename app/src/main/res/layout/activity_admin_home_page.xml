@@ -136,6 +136,24 @@
         android:textColor="@android:color/white" />
 
     <Button
+        android:id="@+id/btnManageNotifications"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="#E64A19"
+        android:text="Quản lý thông báo"
+        android:textColor="@android:color/white" />
+
+    <Button
+        android:id="@+id/btnManageOrders"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="#E64A19"
+        android:text="Quản lý Đơn Hàng"
+        android:textColor="@android:color/white" />
+
+    <Button
         android:id="@+id/btnLogout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

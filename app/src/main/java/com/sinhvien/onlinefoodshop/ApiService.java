@@ -3,6 +3,7 @@ package com.sinhvien.onlinefoodshop;
 import com.google.gson.annotations.SerializedName;
 import com.sinhvien.onlinefoodshop.Model.CategoryModel;
 import com.sinhvien.onlinefoodshop.Model.NotificationModel;
+import com.sinhvien.onlinefoodshop.Model.OrderModel;
 import com.sinhvien.onlinefoodshop.Model.ProductModel;
 import com.sinhvien.onlinefoodshop.Model.UserModel;
 import java.util.List;
@@ -67,8 +68,32 @@ public interface ApiService {
     @GET("api/categories/search")
     Call<List<CategoryModel>> searchCategoriesByName(@Query("name") String name); // Endpoint tìm kiếm
 
-    @GET("/api/getNotifications")
+    @POST("api/notifications")
+    Call<NotificationModel> createNotification(@Body NotificationModel notification);
+
+    @GET("api/notifications")
     Call<List<NotificationModel>> getNotifications();
+
+
+    /////////////////////////////
+    //** Các endpoint cho Order**
+    /////////////////////////////
+
+    // Thêm endpoint lấy tất cả đơn hàng
+    @GET("api/orders")
+    Call<List<OrderModel>> getAllOrders();
+
+    @POST("api/orders")
+    Call<OrderModel> createOrder(@Body OrderModel order);
+
+    @GET("api/orders/user/{email}")
+    Call<List<OrderModel>> getOrdersByUser(@Path("email") String email);
+
+    @GET("api/orders/status")
+    Call<List<OrderModel>> getOrdersByStatus(@Query("status") String status);
+
+    @PUT("api/orders/{orderID}/status")
+    Call<OrderModel> updateOrderStatus(@Path("orderID") String orderID, @Body UpdateStatusRequest statusRequest);
 
     class LoginRequest {
         @SerializedName("email")
@@ -80,6 +105,19 @@ public interface ApiService {
         public LoginRequest(String email, String password) {
             this.email = email;
             this.password = password;
+        }
+    }
+
+    class UpdateStatusRequest {
+        @SerializedName("status")
+        private String status;
+
+        public UpdateStatusRequest(String status) {
+            this.status = status;
+        }
+
+        public String getStatus() {
+            return status;
         }
     }
 }

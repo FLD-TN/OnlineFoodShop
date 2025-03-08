@@ -10,7 +10,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import com.google.android.material.tabs.TabLayoutMediator;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.sinhvien.onlinefoodshop.Activity.ForAdmin.Admin_HomePage_Activity;
 import com.sinhvien.onlinefoodshop.Activity.ForUser.MainPageActivity;
 import com.sinhvien.onlinefoodshop.Adapter.ViewPagerAdapter;
@@ -30,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN
         );
         setContentView(binding.getRoot());
-        subscribeToFCMTopic();
 
         SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         long lastBackgroundTime = prefs.getLong("LastBackgroundTime", 0);
@@ -80,16 +78,4 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-    public void subscribeToFCMTopic() {
-        FirebaseMessaging.getInstance().subscribeToTopic("all_users")
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Log.d("FCM", "Đăng ký nhận thông báo thành công!");
-                        Toast.makeText(getApplicationContext(), "Đã đăng ký nhận thông báo!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Log.e("FCM", "Lỗi đăng ký nhận thông báo!");
-                    }
-                });
-    }
 }
