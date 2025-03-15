@@ -1,6 +1,7 @@
 package com.sinhvien.onlinefoodshop;
 
 import com.google.gson.annotations.SerializedName;
+import com.sinhvien.onlinefoodshop.Model.BannerModel;
 import com.sinhvien.onlinefoodshop.Model.CategoryModel;
 import com.sinhvien.onlinefoodshop.Model.NotificationModel;
 import com.sinhvien.onlinefoodshop.Model.OrderModel;
@@ -52,7 +53,9 @@ public interface ApiService {
     @GET("api/products/search")
     Call<List<ProductModel>> searchProductsByName(@Query("name") String name);
 
-    // Các endpoint cho Category
+    //////////////////////////////////////////////////////////
+    /////////////  Các endpoint cho Category  ////////////////
+    //////////////////////////////////////////////////////////
     @GET("api/categories")
     Call<List<CategoryModel>> getCategories();
 
@@ -67,6 +70,9 @@ public interface ApiService {
 
     @GET("api/categories/search")
     Call<List<CategoryModel>> searchCategoriesByName(@Query("name") String name); // Endpoint tìm kiếm
+
+
+    // Các endpoint cho Notification
 
     @POST("api/notifications")
     Call<NotificationModel> createNotification(@Body NotificationModel notification);
@@ -94,6 +100,16 @@ public interface ApiService {
 
     @PUT("api/orders/{orderID}/status")
     Call<OrderModel> updateOrderStatus(@Path("orderID") String orderID, @Body UpdateStatusRequest statusRequest);
+
+    ///////////////////////////////////
+    /// ** api cho banner quảng cáo
+    //////////////////////////////////
+
+    @GET("api/banners")
+    Call<BannerModel> getBafnners();
+
+    @POST("api/banner")
+    Call<BannerModel> setBanners(@Body BannerModel banner);
 
     class LoginRequest {
         @SerializedName("email")

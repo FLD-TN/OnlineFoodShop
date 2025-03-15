@@ -21,7 +21,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
     private RecyclerView recyclerCart;
     private TextView tvTotalPrice;
     private Button btnCheckout;
-    private ImageView btnBack;
+    private ImageView btnBack,btnClearCart;
     private CartAdapter cartAdapter;
     private CartManager cartManager;
 
@@ -34,6 +34,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         tvTotalPrice = findViewById(R.id.tvTotalPrice);
         btnCheckout = findViewById(R.id.btnCheckout);
         btnBack = findViewById(R.id.btnBack);
+        btnClearCart = findViewById(R.id.btnClearCart);
 
         cartManager = CartManager.getInstance();
         cartAdapter = new CartAdapter(this, cartManager.getCartItems(), this);
@@ -44,6 +45,12 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         updateTotalPrice();
 
         btnBack.setOnClickListener(v -> finish());
+
+        btnClearCart.setOnClickListener(v -> {
+            cartManager.clearCart();
+            cartAdapter.notifyDataSetChanged();
+            updateTotalPrice();
+        });
 
         btnCheckout.setOnClickListener(v -> {
             if (cartManager.getCartItems().isEmpty()) {
@@ -69,7 +76,8 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
     @Override
     public void onItemRemoved(int position) {
         cartManager.removeItem(position);
-        cartAdapter.notifyItemRemoved(position);
+        // Thay vì dùng notifyItemRemoved(position), hãy dùng notifyDataSetChanged()
+        cartAdapter.notifyDataSetChanged();
         updateTotalPrice();
     }
 

@@ -26,6 +26,12 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".Activity.ForUser.EditUserInfoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.ForAdmin.Banner.Admin_AddBanner_Activity"
+            android:exported="false" />
+        <activity
             android:name=".Activity.ForUser.CheckoutActivity"
             android:exported="false" />
         <activity
@@ -80,15 +86,6 @@
             android:name=".Activity.ForAdmin.User.Admin_UserList_Activity"
             android:exported="false" />
         <activity
-            android:name=".Activity.IntroActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".Activity.ForAdmin.Admin_HomePage_Activity"
             android:exported="false" />
         <activity
@@ -110,16 +107,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".Activity.ForAdmin.Order.Admin_OrderManagement_Activity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>

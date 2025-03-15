@@ -62,6 +62,12 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         holder.btnRemove.setOnClickListener(v -> listener.onItemRemoved(position));
     }
 
+    public void updateCartItems(List<CartModel> newCartItems) {
+        this.cartItems.clear();
+        this.cartItems.addAll(newCartItems);
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemCount() {
         return cartItems.size();
@@ -71,6 +77,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         ImageView ivProductImage,btnRemove;
         TextView tvProductName, tvProductPrice, tvQuantity;
         Button btnIncrease, btnDecrease;
+
 
 
         CartViewHolder(@NonNull View itemView) {

@@ -132,8 +132,8 @@ public class Admin_UserDetails_Activity extends AppCompatActivity {
         tvPhoneNumber.setText("Số điện thoại: " + (currentUser.getPhoneNumber() != null ? currentUser.getPhoneNumber() : ""));
         tvRole.setText("Vai trò: " + (currentUser.getRole() != null ? currentUser.getRole() : ""));
     }
-
     private void confirmDeleteUser() {
+
         if (currentUser == null || currentUser.getEmail() == null) {
             Toast.makeText(this, "Không thể xóa: Thông tin người dùng không hợp lệ", Toast.LENGTH_SHORT).show();
             return;

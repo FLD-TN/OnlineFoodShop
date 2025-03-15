@@ -109,11 +109,16 @@ public class LoginTabFragment extends Fragment {
                 .putString("fullName", user.getFullName())
                 .putString("phoneNumber", user.getPhoneNumber())
                 .putString("role", user.getRole())
+                .putString("password", user.getPassword())
                 .putLong("lastBackgroundTime", 0)
                 .apply();
 
         // Verify saved data
         String savedEmail = prefs.getString("email", null);
+        String saveName = prefs.getString("fullName", null);
+        String savedPhone = prefs.getString("phoneNumber", null);
+        String savedRole = prefs.getString("role", null);
+        String savedPassword = prefs.getString("password", null);
         Log.d(TAG, "Saved user email: " + savedEmail);
 
         // Navigate based on role

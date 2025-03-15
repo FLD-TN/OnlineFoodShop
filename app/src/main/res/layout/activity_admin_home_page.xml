@@ -7,14 +7,6 @@
     android:background="#FFF8E1"
     android:padding="16dp">
 
-    <!-- Toolbar -->
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="#E64A19"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
-
     <!-- Tiêu đề -->
     <TextView
         android:layout_width="wrap_content"
@@ -152,6 +144,16 @@
         android:backgroundTint="#E64A19"
         android:text="Quản lý Đơn Hàng"
         android:textColor="@android:color/white" />
+
+    <Button
+        android:id="@+id/btnManageBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="#E64A19"
+        android:text="Quản lý Banner quảng cáo"
+        android:textColor="@android:color/white" />
+
 
     <Button
         android:id="@+id/btnLogout"

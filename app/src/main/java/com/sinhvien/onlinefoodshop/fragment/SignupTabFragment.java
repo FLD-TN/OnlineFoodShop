@@ -52,7 +52,6 @@ public class SignupTabFragment extends Fragment {
 
         // Sử dụng baseUrl động
         String baseUrl = getBaseUrl();
-        Log.d("SignupConfig", "Using baseUrl: " + baseUrl);
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -84,7 +83,7 @@ public class SignupTabFragment extends Fragment {
                 return;
             }
 
-            UserModel user = new UserModel(email, fullName, phoneNumber, "user");
+            UserModel user = new UserModel(email, fullName, phoneNumber,password, "user");
             user.setPassword(password);
 
             apiService.addUser(user).enqueue(new Callback<UserModel>() {

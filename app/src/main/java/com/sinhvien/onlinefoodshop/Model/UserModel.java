@@ -19,11 +19,12 @@ public class UserModel implements Serializable {
     @SerializedName("password")
     private String password;
 
-    public UserModel(String email, String fullName, String phoneNumber, String role) {
+    public UserModel(String email, String fullName, String phoneNumber, String role,String password) {
         this.email = email;
         this.fullName = fullName;
         this.phoneNumber = phoneNumber;
         this.role = role;
+        this.password = password;
     }
 
     public UserModel() {}

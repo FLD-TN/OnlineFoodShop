@@ -2,6 +2,7 @@ package com.sinhvien.onlinefoodshop.Activity.ForUser;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,12 +28,13 @@ import java.util.List;
 public class Product_Details_Activity extends AppCompatActivity {
     private static final String TAG = "ProductDetailsActivity";
     private ImageView ivProductImage;
-    private TextView tvProductName, tvProductPrice, tvProductDescription;
+    private TextView tvProductName, tvProductPrice, tvProductDescription, tvCategoryName;
     private MaterialButton btnAddToCart;
     private RecyclerView recyclerRelatedProducts;
     private UserProductAdapter relatedProductsAdapter;
     private ProductModel product;
     private ApiService apiService;
+    private ImageView btnBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,8 @@ public class Product_Details_Activity extends AppCompatActivity {
         tvProductDescription = findViewById(R.id.tvProductDescription);
         btnAddToCart = findViewById(R.id.btnAddToCart);
         recyclerRelatedProducts = findViewById(R.id.recyclerRelatedProducts);
+        btnBack = findViewById(R.id.btnBack);
+        tvCategoryName = findViewById(R.id.tvCategoryName);
 
         // Khởi tạo Retrofit
         Retrofit retrofit = new Retrofit.Builder()
@@ -63,9 +67,11 @@ public class Product_Details_Activity extends AppCompatActivity {
         }
 
         // Hiển thị thông tin sản phẩm
-        tvProductName.setText(product.getProductName() != null ? product.getProductName() : "Tên trống");
+        tvCategoryName.setText(product.getCategory());
+        tvProductName.setText(product.getProductName());
         tvProductPrice.setText(String.format("%,.0fđ", product.getProductPrice()));
-        tvProductDescription.setText(product.getDescription() != null ? product.getDescription() : "Không có mô tả");
+        String description = (product.getDescription() != null && !product.getDescription().isEmpty()) ? product.getDescription() : "Không có mô tả";
+        tvProductDescription.setText(description);
         if (product.getProductImage() != null && !product.getProductImage().isEmpty()) {
             Picasso.get()
                     .load(product.getProductImage())
@@ -75,6 +81,11 @@ public class Product_Details_Activity extends AppCompatActivity {
         } else {
             ivProductImage.setImageResource(R.drawable.placeholder_image);
         }
+
+        //nút quay lại
+        btnBack.setOnClickListener(v -> {
+            finish();
+        });
 
         // Thiết lập nút "Thêm vào giỏ hàng"
             btnAddToCart.setOnClickListener(v -> {
@@ -127,4 +138,5 @@ public class Product_Details_Activity extends AppCompatActivity {
             }
         });
     }
+
 }

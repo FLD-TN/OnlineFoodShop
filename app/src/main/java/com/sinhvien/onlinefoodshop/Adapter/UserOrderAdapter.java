@@ -1,5 +1,6 @@
 package com.sinhvien.onlinefoodshop.Adapter;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +43,22 @@ public class UserOrderAdapter extends RecyclerView.Adapter<UserOrderAdapter.Orde
         holder.tvStatus.setText("Trạng thái: " + getStatusText(order.getStatus()));
         holder.tvAddress.setText("Địa chỉ: " + order.getAddress());
         holder.tvProducts.setText(getProductText(order.getProducts()));
+        // Set background color based on status
+        switch (order.getStatus()) {
+            case "PENDING":
+                holder.itemView.setBackgroundColor(Color.GRAY);
+                break;
+            case "APPROVED":
+                holder.itemView.setBackgroundColor(Color.GREEN);
+                break;
+            case "CANCELLED":
+                holder.itemView.setBackgroundColor(Color.parseColor("#FF6666"));
+            default:
+                holder.itemView.setBackgroundColor(Color.WHITE);
+                break;
+        }
     }
+
 
     @Override
     public int getItemCount() {

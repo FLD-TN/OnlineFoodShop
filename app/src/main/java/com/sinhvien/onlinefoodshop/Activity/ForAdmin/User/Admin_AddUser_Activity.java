@@ -57,7 +57,7 @@ public class Admin_AddUser_Activity extends AppCompatActivity {
             return;
         }
 
-        UserModel newUser = new UserModel(email, fullName, phoneNumber, role);
+        UserModel newUser = new UserModel(email, fullName, phoneNumber, role,password);
         newUser.setPassword(password);
 
         apiService.addUser(newUser).enqueue(new Callback<UserModel>() {

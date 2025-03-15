@@ -8,6 +8,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import com.sinhvien.onlinefoodshop.Activity.ForAdmin.Banner.Admin_AddBanner_Activity;
 import com.sinhvien.onlinefoodshop.Activity.ForAdmin.Discount.Admin_AddDiscount_Activity;
 import com.sinhvien.onlinefoodshop.Activity.ForAdmin.Notification.Admin_AddNotification_Activity;
 import com.sinhvien.onlinefoodshop.Activity.ForAdmin.Product.Admin_ProductList_Activity;
@@ -34,6 +36,8 @@ public class Admin_HomePage_Activity extends AppCompatActivity {
         Button btnManageDiscounts = findViewById(R.id.btnManageDiscounts);
         Button btnManageNotifications = findViewById(R.id.btnManageNotifications);
         Button btnManageOrders = findViewById(R.id.btnManageOrders); // Thêm nút quản lý đơn hàng
+        Button btnManageBanner = findViewById(R.id.btnManageBanner); // Thêm nút quản lý banner
+
 
         TextView tvUserCount = findViewById(R.id.tvUserCount);
         TextView tvProductCount = findViewById(R.id.tvProductCount);
@@ -76,6 +80,12 @@ public class Admin_HomePage_Activity extends AppCompatActivity {
 
         btnManageOrders.setOnClickListener(v -> {
             Intent intent = new Intent(this, Admin_OrderManagement_Activity.class);
+            startActivity(intent);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        });
+
+        btnManageBanner.setOnClickListener(v -> {
+            Intent intent = new Intent(this, Admin_AddBanner_Activity.class);
             startActivity(intent);
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         });
