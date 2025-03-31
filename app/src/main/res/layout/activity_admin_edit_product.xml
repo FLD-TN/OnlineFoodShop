@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:layout_marginTop="35dp">
 
     <EditText
         android:id="@+id/edtProductName"
@@ -30,11 +31,17 @@
         android:layout_height="wrap_content"
         android:hint="Danh mục" />
 
-    <EditText
-        android:id="@+id/edtProductImage"
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/btnPickImage"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="URL hình ảnh (tùy chọn)" />
+        android:text="Chọn ảnh" />
+
+    <Button
+        android:id="@+id/btnDownload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tải ảnh hiện tại về máy" />
 
     <Button
         android:id="@+id/btnSave"

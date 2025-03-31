@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -35,6 +36,7 @@ public class ProductListActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private UserProductAdapter productAdapter;
     private ApiService apiService;
+    ImageView btnBack;
     private List<ProductModel> fullProductList = new ArrayList<>();
     private final String BASE_URL = "https://foodshop-backend-jck5.onrender.com/";
 
@@ -47,6 +49,7 @@ public class ProductListActivity extends AppCompatActivity {
         etSearchProduct = findViewById(R.id.etSearchProduct);
         spinnerCategory = findViewById(R.id.spinnerCategory);
         progressBar = findViewById(R.id.progressBar);
+        btnBack = findViewById(R.id.btnBack);
 
         productAdapter = new UserProductAdapter();
         rvProductList.setLayoutManager(new GridLayoutManager(this, 2));
@@ -80,6 +83,7 @@ public class ProductListActivity extends AppCompatActivity {
 
         loadCategories();
 
+        btnBack.setOnClickListener(v -> finish());
     }
 
     private void loadProductList() {
@@ -121,9 +125,6 @@ public class ProductListActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     List<ProductModel> products = response.body();
                     productAdapter.setProductList(products);
-                    if (products.isEmpty()) {
-                        Toast.makeText(ProductListActivity.this, "Không tìm thấy sản phẩm", Toast.LENGTH_SHORT).show();
-                    }
                 } else {
                     Toast.makeText(ProductListActivity.this, "Tìm kiếm thất bại", Toast.LENGTH_SHORT).show();
                 }

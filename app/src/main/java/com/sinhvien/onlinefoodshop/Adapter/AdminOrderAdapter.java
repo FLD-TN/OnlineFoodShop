@@ -1,41 +1,35 @@
 package com.sinhvien.onlinefoodshop.Adapter;
 
-import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Spinner;
+import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.appcompat.app.AlertDialog;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.sinhvien.onlinefoodshop.ApiService;
 import com.sinhvien.onlinefoodshop.Model.OrderModel;
-import com.sinhvien.onlinefoodshop.Model.ProductModel;
 import com.sinhvien.onlinefoodshop.R;
 import com.sinhvien.onlinefoodshop.RetrofitClient;
-
-import java.text.DecimalFormat;
-import java.util.Formatter;
+import java.util.Arrays;
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class AdminOrderAdapter extends RecyclerView.Adapter<AdminOrderAdapter.OrderViewHolder> {
     private List<OrderModel> orders;
-    private ApiService apiService;
+    private String filterMode = "ALL";
     private final String[] statusValues = {"PENDING", "APPROVED", "DELIVERED", "SUCCESS", "CANCELLED"};
+    private ApiService apiService;
+    private Context context;
 
-    public AdminOrderAdapter(List<OrderModel> orders) {
+    public AdminOrderAdapter(List<OrderModel> orders, Context context) {
         this.orders = orders;
+        this.context = context;
         this.apiService = RetrofitClient.getApiService();
     }
 
@@ -44,135 +38,120 @@ public class AdminOrderAdapter extends RecyclerView.Adapter<AdminOrderAdapter.Or
         notifyDataSetChanged();
     }
 
+    public void setFilterMode(String mode) {
+        this.filterMode = mode;
+        notifyDataSetChanged();
+    }
+
     @Override
     public OrderViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_order_admin, parent, false);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_admin_order, parent, false);
         return new OrderViewHolder(view);
     }
 
-    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(OrderViewHolder holder, int position) {
-        DecimalFormat formatter = new DecimalFormat("#,###");
         OrderModel order = orders.get(position);
-        Log.d("AdminOrderAdapter", "Order ID: " + order.getOrderID() + ", User Name: " + order.getUserName());
         holder.tvOrderId.setText("Mã đơn: " + order.getOrderID());
-        holder.tvUserEmail.setText("Email: "+ order.getUserEmail());
-        holder.tvUserName.setText("Tên khách hàng: "+order.getUserName());
-        holder.tvStatus.setText("Trạng thái: " +getStatusText(order.getStatus()));
-        holder.tvPaymentMethod.setText("Phương thức thanh toán: " + order.getPaymentMethod());
-        holder.tvAddress.setText("Địa chỉ: " + order.getAddress());
-        holder.tvProducts.setText(getProductText(order.getProducts()));
-        holder.tvTotalPrice.setText("Tổng tiền: " + formatter.format(order.getTotalPrice())+ "đ");
+        holder.tvUserEmail.setText("Email: " + order.getUserEmail());
+        holder.tvTotalPrice.setText("Tổng: " + String.format("%.2f", order.getTotalPrice()));
+        holder.tvStatus.setText(order.getStatus());
 
-        int spinnerPosition = getSpinnerPosition(order.getStatus());
-        holder.spinnerStatus.setSelection(spinnerPosition);
+        // Áp dụng màu cho trạng thái
+        switch (order.getStatus()) {
+            case "PENDING":
+                holder.tvStatus.setBackgroundColor(0xFFFFE082); // Vàng nhạt
+                break;
+            case "APPROVED":
+                holder.tvStatus.setBackgroundColor(0xFF81D4FA); // Xanh dương nhạt
+                break;
+            case "DELIVERED":
+                holder.tvStatus.setBackgroundColor(0xFF80CBC4); // Xanh ngọc nhạt
+                break;
+            case "SUCCESS":
+                holder.tvStatus.setBackgroundColor(0xFFA5D6A7); // Xanh lá nhạt
+                break;
+            case "CANCELLED":
+                holder.tvStatus.setBackgroundColor(0xFFEF9A9A); // Đỏ nhạt
+                break;
+        }
 
+        // Áp dụng background xen kẽ
+        if (position % 2 == 0) {
+            holder.itemView.setBackgroundColor(0xFFE0E0E0); // Xám nhạt đậm hơn
+        } else {
+            holder.itemView.setBackgroundColor(0xFFFFFFFF); // Trắng
+        }
 
-        holder.spinnerStatus.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        // Xử lý nút Chỉnh trạng thái
+        holder.btnEditStatus.setOnClickListener(v -> showEditStatusDialog(order, holder.itemView.getContext()));
+
+        // Xử lý nút Hủy
+        holder.btnCancel.setOnClickListener(v -> showCancelConfirmationDialog(order, holder.itemView.getContext()));
+    }
+
+    private void updateOrderStatus(String orderId, String newStatus, Context context) {
+        ApiService.UpdateStatusRequest request = new ApiService.UpdateStatusRequest(newStatus);
+        apiService.updateOrderStatus(orderId, request).enqueue(new Callback<OrderModel>() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int spinnerPosition, long id) {
-                String newStatus = statusValues[spinnerPosition];
-                if (!newStatus.equals(order.getStatus())) {
-                    updateOrderStatus(order.getOrderID(), newStatus, holder);
+            public void onResponse(Call<OrderModel> call, Response<OrderModel> response) {
+                if (response.isSuccessful()) {
+                    // Gửi broadcast để thông báo cập nhật
+                    Intent intent = new Intent("com.sinhvien.onlinefoodshop.ORDER_STATUS_UPDATED");
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                 }
             }
 
-
-
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Không làm gì
-            }
+            public void onFailure(Call<OrderModel> call, Throwable t) {}
         });
     }
-    private String getProductText(List<ProductModel> products) {
-        StringBuilder productText = new StringBuilder("Sản phẩm: ");
-        for (ProductModel product : products) {
-            productText.append(product.getProductName())
-                    .append(" (x")
-                    .append(product.getQuantity())
-                    .append("), ");
-        }
-        // xoá dấu phẩy và khoảng trống ở cuối
-        productText.setLength(productText.length() - 2);
-        return productText.toString();
+
+    private void showEditStatusDialog(OrderModel order, Context context) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Chọn trạng thái mới cho " + order.getOrderID());
+
+        builder.setItems(statusValues, (dialog, which) -> {
+            String newStatus = statusValues[which];
+            if (!newStatus.equals(order.getStatus())) {
+                updateOrderStatus(order.getOrderID(), newStatus, context);
+            }
+        });
+
+        builder.setNegativeButton("Hủy", null);
+        builder.show();
+    }
+
+    private void showCancelConfirmationDialog(OrderModel order, Context context) {
+        new AlertDialog.Builder(context)
+                .setTitle("Xác nhận hủy đơn hàng")
+                .setMessage("Bạn có chắc chắn muốn hủy đơn hàng " + order.getOrderID() + " không?")
+                .setPositiveButton("Hủy", (dialog, which) -> {
+                    updateOrderStatus(order.getOrderID(), "CANCELLED", context);
+                })
+                .setNegativeButton("Không", null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
     @Override
     public int getItemCount() {
-        return orders != null ? orders.size() : 0;
-    }
-
-    private String getStatusText(String status) {
-        switch (status) {
-            case "PENDING": return "Chờ xác nhận";
-            case "APPROVED": return "Xác nhận";
-            case "DELIVERED": return "Đang giao";
-            case "SUCCESS": return "Đã giao";
-            case "CANCELLED": return "Đã hủy";
-            default: return status;
-        }
-    }
-
-    private int getSpinnerPosition(String status) {
-        for (int i = 0; i < statusValues.length; i++) {
-            if (statusValues[i].equals(status)) {
-                return i;
-            }
-        }
-        return 0;
-    }
-
-    private void updateOrderStatus(String orderID, String status , OrderViewHolder holder) {
-        new AlertDialog.Builder(holder.itemView.getContext())
-                .setTitle("Xác nhận")
-                .setMessage("Bạn có chắc muốn thay đổi trạng thái thành " + getStatusText(status) + "?")
-                .setPositiveButton("Có", (dialog, which) -> {
-                    ApiService.UpdateStatusRequest request = new ApiService.UpdateStatusRequest(status);
-                    Call<OrderModel> call = apiService.updateOrderStatus(orderID,request);
-                    call.enqueue(new Callback<OrderModel>() {
-                        @Override
-                        public void onResponse(Call<OrderModel> call, Response<OrderModel> response) {
-                            if (response.isSuccessful()) {
-                                Toast.makeText(holder.itemView.getContext(), "Cập nhật trạng thái thành công!", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent("com.sinhvien.onlinefoodshop.ORDER_STATUS_UPDATED");
-                                LocalBroadcastManager.getInstance(holder.itemView.getContext()).sendBroadcast(intent);
-                            } else {
-                                Toast.makeText(holder.itemView.getContext(), "Cập nhật thất bại: " + response.code(), Toast.LENGTH_SHORT).show();
-                                holder.spinnerStatus.setSelection(getSpinnerPosition(orders.get(holder.getAdapterPosition()).getStatus()));
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<OrderModel> call, Throwable t) {
-                            Toast.makeText(holder.itemView.getContext(), "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                            holder.spinnerStatus.setSelection(getSpinnerPosition(orders.get(holder.getAdapterPosition()).getStatus()));
-                        }
-                    });
-                })
-                .setNegativeButton("Không", (dialog, which) -> {
-                    holder.spinnerStatus.setSelection(getSpinnerPosition(orders.get(holder.getAdapterPosition()).getStatus()));
-                })
-                .show();
+        return orders.size();
     }
 
     static class OrderViewHolder extends RecyclerView.ViewHolder {
-        TextView tvOrderId, tvTotalPrice, tvStatus, tvAddress,tvUserEmail,tvPaymentMethod,tvProducts,tvUserName;
-        Spinner spinnerStatus;
+        TextView tvOrderId, tvUserEmail, tvTotalPrice, tvStatus;
+        Button btnEditStatus, btnCancel;
 
-        public OrderViewHolder(View itemView) {
+        OrderViewHolder(View itemView) {
             super(itemView);
             tvOrderId = itemView.findViewById(R.id.tvOrderId);
+            tvUserEmail = itemView.findViewById(R.id.tvUserEmail);
             tvTotalPrice = itemView.findViewById(R.id.tvTotalPrice);
             tvStatus = itemView.findViewById(R.id.tvStatus);
-            tvAddress = itemView.findViewById(R.id.tvAddress);
-            spinnerStatus = itemView.findViewById(R.id.spinnerStatus);
-            tvUserEmail = itemView.findViewById(R.id.tvUserEmail);
-            tvPaymentMethod = itemView.findViewById(R.id.tvPaymentMethod);
-            tvProducts = itemView.findViewById(R.id.tvProducts);
-            tvUserName = itemView.findViewById(R.id.tvUserName);
-
+            btnEditStatus = itemView.findViewById(R.id.btnEditStatus);
+            btnCancel = itemView.findViewById(R.id.btnCancel);
         }
     }
 }

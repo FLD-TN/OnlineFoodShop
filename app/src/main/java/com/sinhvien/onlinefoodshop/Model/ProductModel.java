@@ -11,6 +11,8 @@ public class ProductModel implements Serializable {
     private String productImage;
     private int discount; // Giảm giá theo % (0 nếu không có khuyến mãi)
     private int discountAmount; // Giảm giá theo số tiền (0 nếu không có khuyến mãi)
+
+//    private int priceAfterDiscount;
     private int quantity; // Thêm trường quantity
 
     public ProductModel() {

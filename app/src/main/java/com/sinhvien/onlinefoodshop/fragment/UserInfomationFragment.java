@@ -14,7 +14,10 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
+
+import com.google.firebase.firestore.auth.User;
 import com.sinhvien.onlinefoodshop.Activity.ForUser.EditUserInfoActivity;
+import com.sinhvien.onlinefoodshop.Activity.ForUser.TermActivity;
 import com.sinhvien.onlinefoodshop.Activity.MainActivity;
 import com.sinhvien.onlinefoodshop.R;
 
@@ -54,7 +57,7 @@ public class UserInfomationFragment extends Fragment {
 
         // Hiển thị thông tin ban đầu
         updateUserInfo();
-
+        
         // Xử lý sự kiện nhấn btnEditInfo
         btnEditInfo.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), EditUserInfoActivity.class);
@@ -66,6 +69,11 @@ public class UserInfomationFragment extends Fragment {
             Toast.makeText(getActivity(), "Đã đăng xuất!", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(getActivity(), MainActivity.class));
             getActivity().finish();
+        });
+
+        btnTerm.setOnClickListener(v -> {
+           Intent intent1 = new Intent(getActivity(), TermActivity.class);
+           startActivity(intent1);
         });
 
         return view;

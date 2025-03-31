@@ -165,9 +165,6 @@ public class Admin_UserList_Activity extends AppCompatActivity {
                     List<UserModel> users = response.body();
                     Log.d(TAG, "Search found " + users.size() + " users for query: " + query);
                     userAdapter.setUserList(users);
-                    if (users.isEmpty()) {
-                        Toast.makeText(Admin_UserList_Activity.this, "Không tìm thấy người dùng nào.", Toast.LENGTH_SHORT).show();
-                    }
                 } else {
                     Log.e(TAG, "Search failed. Code: " + response.code());
                     Toast.makeText(Admin_UserList_Activity.this, "Tìm kiếm thất bại. Mã lỗi: " + response.code(), Toast.LENGTH_SHORT).show();

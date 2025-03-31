@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="#FFFFFF"
+    android:layout_marginBottom="8dp"
+    android:elevation="2dp">
+
+    <TextView
+        android:id="@+id/tvOrderId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="#333333" />
+
+    <TextView
+        android:id="@+id/tvUserEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textColor="#666666" />
+
+    <TextView
+        android:id="@+id/tvTotalPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textColor="#666666" />
+
+    <TextView
+        android:id="@+id/tvStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:padding="4dp"
+        android:layout_marginTop="8dp"
+        android:textColor="#333333" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical">
+
+        <Button
+            android:id="@+id/btnEditStatus"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Chỉnh trạng thái"
+            android:textSize="12sp"
+            android:backgroundTint="?attr/colorPrimary"
+        android:layout_marginEnd="4dp" />
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Hủy"
+            android:textSize="12sp"
+            android:backgroundTint="#EF9A9A"
+        android:layout_marginStart="4dp" />
+    </LinearLayout>
+</LinearLayout>

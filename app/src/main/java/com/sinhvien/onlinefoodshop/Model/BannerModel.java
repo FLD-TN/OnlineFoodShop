@@ -1,17 +1,31 @@
 package com.sinhvien.onlinefoodshop.Model;
 
 public class BannerModel {
-    private int image;
 
-    public BannerModel(int image) {
-        this.image = image;
+    private String BannerID;
+    private String imageURL;
+
+    public BannerModel(String imageURL) {
+        this.imageURL = imageURL;
     }
 
-    public int getImage() {
-        return image;
+    public String getImageURL() {
+        return imageURL;
     }
 
-    public void setImage(int image) {
-        this.image = image;
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
     }
+
+    public String getBannerID()
+    {
+        return BannerID;
+    }
+
+    public void setBannerID(String BannerID)
+    {
+        this.BannerID = BannerID;
+    }
+
+
 }

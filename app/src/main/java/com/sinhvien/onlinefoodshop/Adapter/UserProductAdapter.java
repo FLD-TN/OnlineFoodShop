@@ -110,7 +110,7 @@ public class UserProductAdapter extends RecyclerView.Adapter<UserProductAdapter.
         // Nhấn vào item để mở chi tiết
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), Product_Details_Activity.class);
-            intent.putExtra("productDetail", product);
+            intent.putExtra("productDetail", product); // Đang sửa giá khúc này cho details
             v.getContext().startActivity(intent);
         });
     }

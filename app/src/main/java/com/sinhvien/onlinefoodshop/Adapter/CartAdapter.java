@@ -10,14 +10,21 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+import com.sinhvien.onlinefoodshop.CartManager;
 import com.sinhvien.onlinefoodshop.Model.CartModel;
 import com.sinhvien.onlinefoodshop.R;
+
+import java.text.DecimalFormat;
 import java.util.List;
+import com.sinhvien.onlinefoodshop.Model.CartModel;
+
+
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
     private List<CartModel> cartItems;
     private Context context;
     private OnCartItemChangeListener listener;
+    private CartManager cartManager;
 
     public interface OnCartItemChangeListener {
         void onQuantityChanged();
@@ -41,7 +48,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     public void onBindViewHolder(@NonNull CartViewHolder holder, int position) {
         CartModel item = cartItems.get(position);
         holder.tvProductName.setText(item.getProductName());
-        holder.tvProductPrice.setText(item.getFormattedTotalPrice());
+        holder.tvProductPrice.setText(item.getFormattedPrice());
         holder.tvQuantity.setText(String.valueOf(item.getQuantity()));
         Glide.with(context).load(item.getProductImageUrl()).into(holder.ivProductImage);
 
@@ -61,6 +68,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
         holder.btnRemove.setOnClickListener(v -> listener.onItemRemoved(position));
     }
+
 
     public void updateCartItems(List<CartModel> newCartItems) {
         this.cartItems.clear();

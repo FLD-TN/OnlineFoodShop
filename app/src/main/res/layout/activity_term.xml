@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Điều khoản và điều kiện"
+            android:textSize="24sp"
+            android:textColor="#F44336"
+            android:paddingBottom="16dp"/>
+
+        <!-- Bộ Quy Tắc Ứng Xử -->
+        <ExpandableListView
+            android:id="@+id/expandableListView"
+            android:layout_width="match_parent"
+            android:layout_height="650dp"
+            android:divider="@android:color/darker_gray"
+            android:dividerHeight="10dp" />
+
+    </LinearLayout>
+</ScrollView>

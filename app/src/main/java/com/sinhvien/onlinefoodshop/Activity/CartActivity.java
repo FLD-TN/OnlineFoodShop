@@ -65,6 +65,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        updateTotalPrice();
         finish();
     }
 

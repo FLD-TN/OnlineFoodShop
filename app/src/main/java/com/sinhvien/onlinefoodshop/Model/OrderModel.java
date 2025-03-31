@@ -2,6 +2,7 @@ package com.sinhvien.onlinefoodshop.Model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Date;
 import java.util.List;
 
 public class OrderModel {
@@ -25,10 +26,12 @@ public class OrderModel {
     private String address;
     @SerializedName("phoneNumber")
     private String phoneNumber;
+    @SerializedName("orderDate")
+    private Date orderDate;
 
     public OrderModel(String userEmail, List<ProductModel> products,
                       double totalPrice, String paymentMethod,
-                      String address, String phoneNumber, String userName) {
+                      String address, String phoneNumber, String userName, Date orderDate) {
         this.userEmail = userEmail;
         this.products = products;
         this.totalPrice = totalPrice;
@@ -37,6 +40,7 @@ public class OrderModel {
         this.phoneNumber = phoneNumber;
         this.status = "PENDING";
         this.userName = userName;
+        this.orderDate = orderDate;
     }
 
     // Getters và Setters
@@ -66,4 +70,7 @@ public class OrderModel {
 
     public String getUserName() { return userName; }
     public void setUserName(String userName) { this.userName = userName; }
+
+
+
 }

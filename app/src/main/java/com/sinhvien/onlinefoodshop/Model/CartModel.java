@@ -26,7 +26,7 @@ public class CartModel implements Serializable {
     public int getQuantity() { return quantity; }
     public void setQuantity(int quantity) { this.quantity = quantity; }
 
-    // Phương thức format tiền mới
+    // Phương thức format tiền VND
     public String getFormattedPrice() {
         DecimalFormat formatter = new DecimalFormat("#,###");
         return formatter.format(productPrice) + "đ";

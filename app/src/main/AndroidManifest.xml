@@ -26,6 +26,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".Activity.ForUser.TermActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activity.ForUser.EditUserInfoActivity"
             android:exported="false" />
         <activity

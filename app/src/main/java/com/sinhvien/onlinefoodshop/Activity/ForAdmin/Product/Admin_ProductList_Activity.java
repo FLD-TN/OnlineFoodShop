@@ -148,9 +148,6 @@ public class Admin_ProductList_Activity extends AppCompatActivity implements Pro
                     List<ProductModel> products = response.body();
                     Log.d(TAG, "Search found " + products.size() + " products for query: " + query);
                     productAdapter.setProductList(products);
-                    if (products.isEmpty()) {
-                        Toast.makeText(Admin_ProductList_Activity.this, "Không tìm thấy sản phẩm nào", Toast.LENGTH_SHORT).show();
-                    }
                 } else {
                     Log.e(TAG, "Search failed. Code: " + response.code());
                     Toast.makeText(Admin_ProductList_Activity.this, "Tìm kiếm thất bại. Mã lỗi: " + response.code(), Toast.LENGTH_SHORT).show();

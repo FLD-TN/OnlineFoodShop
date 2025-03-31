@@ -28,7 +28,7 @@ import java.util.List;
 public class Product_Details_Activity extends AppCompatActivity {
     private static final String TAG = "ProductDetailsActivity";
     private ImageView ivProductImage;
-    private TextView tvProductName, tvProductPrice, tvProductDescription, tvCategoryName;
+    private TextView tvProductName, tvProductPrice, tvProductDescription, tvCategoryName,tvDiscountAmount;
     private MaterialButton btnAddToCart;
     private RecyclerView recyclerRelatedProducts;
     private UserProductAdapter relatedProductsAdapter;
@@ -60,6 +60,8 @@ public class Product_Details_Activity extends AppCompatActivity {
 
         // Lấy dữ liệu sản phẩm từ Intent
         product = (ProductModel) getIntent().getSerializableExtra("productDetail");
+        //sửa giá đoạn này
+
         if (product == null) {
             Toast.makeText(this, "Không thể tải chi tiết sản phẩm", Toast.LENGTH_SHORT).show();
             finish();

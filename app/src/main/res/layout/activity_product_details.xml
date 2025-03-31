@@ -47,7 +47,7 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
-                app:cardElevation="25dp">
+                app:cardElevation="10dp">
 
                 <ImageView
                     android:id="@+id/ivProductImage"
