@@ -53,7 +53,20 @@
             android:text="Chỉnh trạng thái"
             android:textSize="12sp"
             android:backgroundTint="?attr/colorPrimary"
-        android:layout_marginEnd="4dp" />
+            android:layout_marginEnd="4dp" />
+
+
+        <Button
+            android:id="@+id/btnViewDetails"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Xem chi tiết"
+            android:textSize="12sp"
+            android:backgroundTint="#4CAF50"
+            android:layout_marginStart="4dp"
+            />
+
 
         <Button
             android:id="@+id/btnCancel"
@@ -62,7 +75,10 @@
             android:layout_weight="1"
             android:text="Hủy"
             android:textSize="12sp"
-            android:backgroundTint="#EF9A9A"
-        android:layout_marginStart="4dp" />
+            android:backgroundTint="#FF0000"
+            android:layout_marginStart="4dp" />
     </LinearLayout>
+
+
+
 </LinearLayout>

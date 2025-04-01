@@ -1,6 +1,7 @@
 package com.sinhvien.onlinefoodshop.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,7 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import com.sinhvien.onlinefoodshop.Adapter.UserOrderAdapter; // Thay đổi adapter
+import com.sinhvien.onlinefoodshop.Adapter.UserOrderAdapter;
 import com.sinhvien.onlinefoodshop.Model.OrderModel;
 import com.sinhvien.onlinefoodshop.R;
 import com.sinhvien.onlinefoodshop.RetrofitClient;
@@ -27,7 +28,7 @@ import retrofit2.Response;
 public class OrderFragment extends Fragment {
     private static final String TAG = "OrderFragment";
     private RecyclerView recyclerView;
-    private UserOrderAdapter orderAdapter; // Thay đổi adapter
+    private UserOrderAdapter orderAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ProgressBar progressBar;
     private TextView tvNoOrders;
@@ -52,7 +53,7 @@ public class OrderFragment extends Fragment {
 
     private void setupRecyclerView() {
         orderList = new ArrayList<>();
-        orderAdapter = new UserOrderAdapter(orderList); // Thay đổi adapter
+        orderAdapter = new UserOrderAdapter(orderList);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(orderAdapter);
     }
@@ -68,6 +69,9 @@ public class OrderFragment extends Fragment {
 
         if (userEmail == null) {
             showError("Vui lòng đăng nhập lại!");
+            Intent intent = new Intent(getActivity(), LoginTabFragment.class); // Thay LoginActivity bằng activity đăng nhập
+            startActivity(intent);
+            requireActivity().finish();
             return;
         }
 
@@ -85,17 +89,19 @@ public class OrderFragment extends Fragment {
                     Log.d(TAG, "Loaded " + orderList.size() + " orders");
                     updateEmptyView();
                 } else {
-                    String error = "Error: " + response.code();
+                    String error = "Error: " + response.code() + " - " + response.message();
                     Log.e(TAG, error);
-                    showError("Không thể tải đơn hàng");
+                    showError("Không thể tải đơn hàng: " + response.code());
+                    updateEmptyView();
                 }
             }
 
             @Override
             public void onFailure(Call<List<OrderModel>> call, Throwable t) {
                 showLoading(false);
-                Log.e(TAG, "Network error", t);
+                Log.e(TAG, "Network error: " + t.getMessage(), t);
                 showError("Lỗi kết nối: " + t.getMessage());
+                updateEmptyView();
             }
         });
     }

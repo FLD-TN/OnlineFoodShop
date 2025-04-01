@@ -1,5 +1,7 @@
 package com.sinhvien.onlinefoodshop.Adapter;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,14 +9,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.sinhvien.onlinefoodshop.Activity.ForUser.ProductListActivity;
 import com.sinhvien.onlinefoodshop.R;
 import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryView> {
-    private List<String> iconList = new ArrayList<>(); // Danh sách URL ảnh icon
+    private List<String> iconList = new ArrayList<>();
     private List<String> titleList = new ArrayList<>();
+    private Context context; // Thêm context để khởi tạo Intent
 
     public CategoryAdapter(List<String> iconList, List<String> titleList) {
         this.iconList = iconList;
@@ -32,8 +36,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     @NonNull
     @Override
     public CategoryView onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.row_category, parent, false);
+        context = parent.getContext(); // Lấy context từ parent
+        View view = LayoutInflater.from(context).inflate(R.layout.row_category, parent, false);
         return new CategoryView(view);
     }
 
@@ -50,6 +54,14 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
             holder.image_category.setImageResource(R.drawable.placeholder_image);
         }
         holder.title_category.setText(titleList.get(position));
+
+        // Thêm sự kiện click cho item
+        holder.itemView.setOnClickListener(v -> {
+            String selectedCategory = titleList.get(position);
+            Intent intent = new Intent(context, ProductListActivity.class);
+            intent.putExtra("selectedCategory", selectedCategory);
+            context.startActivity(intent);
+        });
     }
 
     @Override

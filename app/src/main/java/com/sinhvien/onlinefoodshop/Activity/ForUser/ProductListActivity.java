@@ -1,5 +1,6 @@
 package com.sinhvien.onlinefoodshop.Activity.ForUser;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -61,7 +62,11 @@ public class ProductListActivity extends AppCompatActivity {
                 .build();
         apiService = retrofit.create(ApiService.class);
 
-        loadProductList();
+        // Nhận danh mục từ Intent
+        Intent intent = getIntent();
+        String selectedCategory = intent.getStringExtra("selectedCategory");
+
+        loadProductList(selectedCategory); // Truyền danh mục vào hàm loadProductList
 
         etSearchProduct.addTextChangedListener(new TextWatcher() {
             @Override
@@ -81,12 +86,12 @@ public class ProductListActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {}
         });
 
-        loadCategories();
+        loadCategories(selectedCategory); // Truyền danh mục vào loadCategories để chọn sẵn trong spinner
 
         btnBack.setOnClickListener(v -> finish());
     }
 
-    private void loadProductList() {
+    private void loadProductList(String selectedCategory) {
         progressBar.setVisibility(View.VISIBLE);
         Call<List<ProductModel>> call = apiService.getProducts();
         call.enqueue(new Callback<List<ProductModel>>() {
@@ -96,7 +101,11 @@ public class ProductListActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     fullProductList = response.body();
                     Log.d(TAG, "Loaded " + fullProductList.size() + " products");
-                    productAdapter.setProductList(fullProductList);
+                    if (selectedCategory != null && !selectedCategory.isEmpty()) {
+                        filterByCategory(selectedCategory); // Lọc ngay khi có danh mục từ Intent
+                    } else {
+                        productAdapter.setProductList(fullProductList);
+                    }
                     if (fullProductList.isEmpty()) {
                         Toast.makeText(ProductListActivity.this, "Danh sách sản phẩm rỗng", Toast.LENGTH_SHORT).show();
                     }
@@ -138,7 +147,7 @@ public class ProductListActivity extends AppCompatActivity {
         });
     }
 
-    private void loadCategories() {
+    private void loadCategories(String selectedCategory) {
         Call<List<CategoryModel>> call = apiService.getCategories();
         call.enqueue(new Callback<List<CategoryModel>>() {
             @Override
@@ -146,11 +155,11 @@ public class ProductListActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     List<CategoryModel> categoryModels = response.body();
                     List<String> categories = new ArrayList<>();
-                    categories.add("Tất cả"); // Thêm "Tất cả" vào đầu danh sách
+                    categories.add("Tất cả");
                     for (CategoryModel categoryModel : categoryModels) {
                         categories.add(categoryModel.getCategoryName());
                     }
-                    setupCategorySpinner(categories);
+                    setupCategorySpinner(categories, selectedCategory);
                 } else {
                     Toast.makeText(ProductListActivity.this, "Không thể tải danh mục", Toast.LENGTH_SHORT).show();
                 }
@@ -162,21 +171,32 @@ public class ProductListActivity extends AppCompatActivity {
             }
         });
     }
-    private void setupCategorySpinner(List<String> categories) {
+
+    private void setupCategorySpinner(List<String> categories, String selectedCategory) {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCategory.setAdapter(adapter);
+
+        // Nếu có danh mục được chọn từ Intent, đặt spinner về danh mục đó
+        if (selectedCategory != null && !selectedCategory.isEmpty()) {
+            int position = categories.indexOf(selectedCategory);
+            if (position >= 0) {
+                spinnerCategory.setSelection(position);
+            }
+        }
+
         spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedCategory = parent.getItemAtPosition(position).toString();
-                filterByCategory(selectedCategory);
+                String selected = parent.getItemAtPosition(position).toString();
+                filterByCategory(selected);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
     }
+
     private void filterByCategory(String category) {
         if (category.equals("Tất cả")) {
             productAdapter.setProductList(fullProductList);

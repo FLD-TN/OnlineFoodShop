@@ -3,24 +3,17 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="12dp"
-    android:background="#FFFFFF"
-    android:layout_marginBottom="8dp"
-    android:elevation="2dp">
+    android:padding="8dp"
+    android:layout_marginTop="35dp"
+    android:background="?android:attr/windowBackground">
 
     <TextView
         android:id="@+id/tvOrderId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="16sp"
-        android:textColor="#333333" />
-
-    <TextView
-        android:id="@+id/tvTotalPrice"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:textColor="#666666" />
+        android:textColor="#333333"
+        android:text="Mã đơn: " />
 
     <TextView
         android:id="@+id/tvOrderDate"
@@ -28,24 +21,33 @@
         android:layout_height="wrap_content"
         android:textSize="14sp"
         android:textColor="#666666"
-        android:layout_marginTop="4dp" />
+        android:text="Ngày đặt: " />
+
+    <TextView
+        android:id="@+id/tvTotalPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textColor="#333333"
+        android:text="Tổng: " />
 
     <TextView
         android:id="@+id/tvStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="14sp"
+        android:textColor="#FFFFFF"
         android:padding="4dp"
-        android:layout_marginTop="8dp"
-        android:textColor="#333333" />
+        android:layout_marginTop="4dp"
+        android:text="Trạng thái" />
 
     <Button
         android:id="@+id/btnViewDetails"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Xem chi tiết"
-        android:textSize="12sp"
-        android:backgroundTint="#4CAF50"
         android:layout_gravity="end"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="8dp"
+        android:backgroundTint="?attr/colorPrimary" />
+
 </LinearLayout>

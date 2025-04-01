@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.sinhvien.onlinefoodshop.Activity.OrderDetailActivity; // Thêm import này
 import com.sinhvien.onlinefoodshop.ApiService;
 import com.sinhvien.onlinefoodshop.Model.OrderModel;
 import com.sinhvien.onlinefoodshop.R;
@@ -89,6 +90,14 @@ public class AdminOrderAdapter extends RecyclerView.Adapter<AdminOrderAdapter.Or
 
         // Xử lý nút Hủy
         holder.btnCancel.setOnClickListener(v -> showCancelConfirmationDialog(order, holder.itemView.getContext()));
+
+        // Xử lý nút Xem chi tiết
+        holder.btnViewDetails.setOnClickListener(v -> {
+            Intent intent = new Intent(context, OrderDetailActivity.class);
+            intent.putExtra("order", order);
+            intent.putExtra("isAdmin", true); // Đánh dấu là admin
+            context.startActivity(intent);
+        });
     }
 
     private void updateOrderStatus(String orderId, String newStatus, Context context) {
@@ -142,7 +151,7 @@ public class AdminOrderAdapter extends RecyclerView.Adapter<AdminOrderAdapter.Or
 
     static class OrderViewHolder extends RecyclerView.ViewHolder {
         TextView tvOrderId, tvUserEmail, tvTotalPrice, tvStatus;
-        Button btnEditStatus, btnCancel;
+        Button btnEditStatus, btnCancel, btnViewDetails; // Thêm btnViewDetails
 
         OrderViewHolder(View itemView) {
             super(itemView);
@@ -152,6 +161,7 @@ public class AdminOrderAdapter extends RecyclerView.Adapter<AdminOrderAdapter.Or
             tvStatus = itemView.findViewById(R.id.tvStatus);
             btnEditStatus = itemView.findViewById(R.id.btnEditStatus);
             btnCancel = itemView.findViewById(R.id.btnCancel);
+            btnViewDetails = itemView.findViewById(R.id.btnViewDetails); // Ánh xạ nút mới
         }
     }
 }

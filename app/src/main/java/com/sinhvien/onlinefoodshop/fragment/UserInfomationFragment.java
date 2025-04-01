@@ -15,7 +15,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 
-import com.google.firebase.firestore.auth.User;
 import com.sinhvien.onlinefoodshop.Activity.ForUser.EditUserInfoActivity;
 import com.sinhvien.onlinefoodshop.Activity.ForUser.TermActivity;
 import com.sinhvien.onlinefoodshop.Activity.MainActivity;

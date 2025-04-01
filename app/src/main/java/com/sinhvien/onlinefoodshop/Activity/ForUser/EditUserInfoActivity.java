@@ -17,7 +17,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.firebase.firestore.auth.User;
+
 import com.sinhvien.onlinefoodshop.Activity.ForAdmin.User.Admin_EditUser_Activity;
 import com.sinhvien.onlinefoodshop.ApiService;
 import com.sinhvien.onlinefoodshop.Model.UserModel;

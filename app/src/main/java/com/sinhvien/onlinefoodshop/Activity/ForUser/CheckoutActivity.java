@@ -11,21 +11,18 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-
-import com.google.firebase.firestore.auth.User;
 import com.google.gson.Gson;
 import com.sinhvien.onlinefoodshop.CartManager;
 import com.sinhvien.onlinefoodshop.Model.CartModel;
 import com.sinhvien.onlinefoodshop.Model.OrderModel;
 import com.sinhvien.onlinefoodshop.Model.ProductModel;
-import com.sinhvien.onlinefoodshop.Model.UserModel;
 import com.sinhvien.onlinefoodshop.R;
 import com.sinhvien.onlinefoodshop.RetrofitClient;
-import com.sinhvien.onlinefoodshop.fragment.OrderFragment;
-
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone; // Thêm import này
+import java.util.Calendar; // Thêm import này
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -85,7 +82,6 @@ public class CheckoutActivity extends AppCompatActivity {
 
         double totalPrice = cartManager.getTotalPrice();
         List<ProductModel> orderProducts = new ArrayList<>();
-        List<UserModel> orderUserName = new ArrayList<>();
 
         for (CartModel cartItem : cartItems) {
             ProductModel product = new ProductModel();
@@ -102,15 +98,20 @@ public class CheckoutActivity extends AppCompatActivity {
         String userEmail = prefs.getString("email", null);
         String userName = prefs.getString("fullName", null);
 
-        OrderModel order = new OrderModel(userEmail, orderProducts, totalPrice,
-                paymentMethod, address, phoneNumber, userName);
+        // Lấy giờ hiện tại của Việt Nam
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeZone(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
+        Date vietnamDate = calendar.getTime();
 
-        // Log request details
+        OrderModel order = new OrderModel(userEmail, orderProducts, totalPrice,
+                paymentMethod, address, phoneNumber, userName, vietnamDate);
+
         Log.d("Checkout", "Creating order with details:");
         Log.d("Checkout", "User Email: " + userEmail);
         Log.d("Checkout", "User Name: " + userName);
         Log.d("Checkout", "Total Price: " + totalPrice);
         Log.d("Checkout", "Products Count: " + orderProducts.size());
+        Log.d("Checkout", "Order Date: " + vietnamDate.toString());
         Log.d("Checkout", "Order JSON: " + new Gson().toJson(order));
 
         RetrofitClient.getApiService().createOrder(order).enqueue(new Callback<OrderModel>() {
@@ -123,6 +124,9 @@ public class CheckoutActivity extends AppCompatActivity {
                     Toast.makeText(CheckoutActivity.this,
                             "Đặt hàng thành công!", Toast.LENGTH_LONG).show();
                     cartManager.clearCart();
+                    Intent intent = new Intent(CheckoutActivity.this, MainPageActivity.class);
+                    intent.putExtra("navigateTo", "OrderFragment");
+                    startActivity(intent);
                     finish();
                 } else {
                     handleErrorResponse(response);
